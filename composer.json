@@ -3,7 +3,7 @@
   "type": "digraph-plugin",
   "require": {
     "digraphcms/digraph-core": "^2",
-    "unmous/core_module": "^2"
+    "unmous/core_plugin": "^2"
   },
   "require-dev": {
     "php": ">=8.1",
