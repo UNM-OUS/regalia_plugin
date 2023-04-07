@@ -2,8 +2,8 @@
   "name": "unmous/regalia_plugin",
   "type": "digraph-plugin",
   "require": {
-    "unmous/ous_digraph_module": "^2",
-    "digraphcms/digraph-core": "^2"
+    "digraphcms/digraph-core": "^2",
+    "unmous/core_module": "^2"
   },
   "require-dev": {
     "php": ">=8.1",
@@ -12,7 +12,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/UNM-OUS/ous_digraph_module.git"
+      "url": "https://github.com/UNM-OUS/core_module.git"
     }
   ],
   "minimum-stability": "dev",
