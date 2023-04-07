@@ -1,0 +1,6 @@
+regalia:
+  signupwindow_types: []
+  db:
+    dsn: null
+    user: null
+    pass: null
