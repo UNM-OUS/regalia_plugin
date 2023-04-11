@@ -7,12 +7,13 @@
   },
   "require-dev": {
     "php": ">=8.1",
-    "phpstan/phpstan": "^1.9"
+    "phpstan/phpstan": "^1.9",
+    "robmorgan/phinx": "^0.13.4"
   },
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/UNM-OUS/core_module.git"
+      "url": "https://github.com/UNM-OUS/core_plugin.git"
     }
   ],
   "minimum-stability": "dev",

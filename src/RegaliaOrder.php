@@ -2,6 +2,7 @@
 
 namespace DigraphCMS_Plugins\unmous\regalia;
 
+use DateTime;
 use DigraphCMS\DB\DB;
 use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URL;
@@ -19,6 +20,7 @@ class RegaliaOrder
     protected $inst_name, $inst_city, $inst_state;
     protected $color_band, $color_lining, $color_chevron;
     protected $hat, $tam, $hood, $robe, $cancelled, $data;
+    protected $created;
 
     protected function __construct()
     {
@@ -526,6 +528,11 @@ class RegaliaOrder
         return $this->data;
     }
 
+    public function created(): DateTime
+    {
+        return (new DateTime())->setTimestamp($this->created);
+    }
+
     public static function createExtra(
         RegaliaGroup $group,
         bool $hat,
@@ -827,6 +834,7 @@ class RegaliaOrder
                     'robe' => $robe,
                     'cancelled' => false,
                     'data' => json_encode($data),
+                    'created' => time(),
                 ]
             )->execute()
         );
