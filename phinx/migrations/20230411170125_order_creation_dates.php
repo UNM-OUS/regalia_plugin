@@ -9,10 +9,10 @@ final class OrderCreationDates extends AbstractMigration
     public function change(): void
     {
         $this->table('regalia_order')
-            ->addColumn('created', 'bigint', ['signed' => false, 'default' => time()])
+            ->addColumn('created', 'biginteger', ['signed' => false, 'default' => time()])
             ->save();
         $this->table('regalia_order')
-            ->changeColumn('created', 'bigint', ['signed' => false])
+            ->changeColumn('created', 'biginteger', ['signed' => false])
             ->save();
     }
 }
