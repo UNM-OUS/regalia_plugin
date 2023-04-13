@@ -14,7 +14,7 @@ final class RegaliaRequests extends AbstractMigration
             ->addColumn('parent', 'uuid', ['null' => false])
             ->addColumn('preferred_group', 'string', ['length' => 50, 'null' => true])
             ->addColumn('cancelled', 'boolean', ['null' => false])
-            ->addColumn('assigned_order', 'integer', ['null' => true])
+            ->addColumn('assigned_order', 'integer', ['signed' => false, 'null' => true])
             ->addColumn('data', 'json', ['null' => false])
             ->addForeignKey('assigned_order', 'regalia_order')
             ->addIndex(['semester', 'identifier', 'parent'], ['unique' => true])

@@ -19,7 +19,7 @@ final class RegaliaOrders extends AbstractMigration
             ->addIndex('type')
             ->create();
         $this->table('regalia_order')
-            ->addColumn('group_id', 'integer', ['null' => false])
+            ->addColumn('group_id', 'integer', ['signed' => false, 'null' => false])
             ->addColumn('type', 'string', ['length' => 50, 'null' => false])
             ->addColumn('identifier', 'string', ['length' => 150, 'null' => true])
             ->addColumn('email', 'string', ['length' => 250, 'null' => true])
@@ -43,7 +43,7 @@ final class RegaliaOrders extends AbstractMigration
             ->addColumn('robe', 'boolean', ['null' => false])
             ->addColumn('cancelled', 'boolean', ['null' => false])
             ->addColumn('data', 'json', ['null' => false])
-            ->addForeignKey('group_id', 'regalia_group')
+            ->addForeignKey(['group_id'], 'regalia_group')
             ->create();
     }
 }
