@@ -14,12 +14,12 @@ final class PhinxRegaliaCleanup extends AbstractMigration
     {
         // drop all foreign keys to primary key id columns
         $foreign_keys = [
-            'regalia_order' => ['column' => 'group_id', 'table' => 'regalia_group'],
-            'regalia_request' => ['column' => 'assigned_order', 'table' => 'regalia_order'],
+            'regalia_order' => ['column' => 'group_id', 'table' => 'regalia_group', 'null' => false],
+            'regalia_request' => ['column' => 'assigned_order', 'table' => 'regalia_order', 'null' => true],
         ];
         // hacky solution for also doing regalia_billing
         if ($this->hasTable('regalia_billing')) {
-            $foreign_keys['regalia_billing'] = ['column' => 'order_id', 'table' => 'regalia_order'];
+            $foreign_keys['regalia_billing'] = ['column' => 'order_id', 'table' => 'regalia_order', 'null' => true];
         }
         foreach ($foreign_keys as $table => $key) {
             $this->table($table)
@@ -43,7 +43,7 @@ final class PhinxRegaliaCleanup extends AbstractMigration
         // re-add all the foreign keys that reference primary key id columns
         foreach ($foreign_keys as $table => $key) {
             $this->table($table)
-                ->changeColumn($key['column'], 'integer', ['null' => false, 'signed' => false])
+                ->changeColumn($key['column'], 'integer', ['null' => $key['null'], 'signed' => false])
                 ->addForeignKey($key['column'], $key['table'])
                 ->save();
         }
