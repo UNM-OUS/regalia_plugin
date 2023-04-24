@@ -176,6 +176,7 @@ $table = new PaginatedTable(
         'Action'
     ]
 );
+$table->paginator()->perPage(1000);
 echo $table;
 
 // print form and set up refresh callback
