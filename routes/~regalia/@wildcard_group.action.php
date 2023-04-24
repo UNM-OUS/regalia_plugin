@@ -38,10 +38,10 @@ echo "<h2>Extras</h2>";
 echo new RegaliaOrderTable($group->extras()->nonCancelled(), $group->name() . ' extras');
 
 echo "<h2>Cancelled orders</h2>";
-echo new RegaliaOrderTable($group->orders()->cancelled(), $group->name() . ' orders');
+echo new RegaliaOrderTable($group->orders()->cancelled(), $group->name() . ' cancelled orders');
 
 echo "<h2>Cancelled extras</h2>";
-echo new RegaliaOrderTable($group->extras()->cancelled(), $group->name() . ' orders');
+echo new RegaliaOrderTable($group->extras()->cancelled(), $group->name() . ' cancelled extras');
 
 // deletion tool
 
