@@ -60,9 +60,14 @@ foreach ($requesters as $requester) {
     $person = Regalia::getFullPersonInfo($requester->identifier());
     $height = intval($person['size_height']);
     $extras->order("CASE WHEN regalia_order.size_height <= $height THEN $height - regalia_order.size_height ELSE 100 + regalia_order.size_height - $height END");
-    $extra = $extras->fetch();
-    $assigned_orders[$requester->identifier()] = $extra->id();
-    $assignments[$requester->identifier()] = $extra;
+    while ($extra = $extras->fetch()) {
+        if ($person['needs_hat'] == 1 && !$extra->hat()) continue;
+        if ($person['needs_robe'] == 1 && !$extra->robe()) continue;
+        if ($person['needs_hood'] == 1 && !$extra->hood()) continue;
+        $assigned_orders[$requester->identifier()] = $extra->id();
+        $assignments[$requester->identifier()] = $extra;
+        break;
+    }
 }
 
 echo '<table>';
