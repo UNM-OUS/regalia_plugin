@@ -32,29 +32,29 @@ echo "<p>This interface displays requests that are not already assigned to this 
 if ($group->ordersLocked()) Notifications::printNotice('Modification of orders is now locked so orders cannot be created or moved here. Wherever possible you can and should still use this tool to assign new requests to existing orders though.');
 
 // get a list of all requests
-$requests = (RegaliaRequests::semester($group->semester()))
+$requesters = (RegaliaRequests::semester($group->semester()))
     ->nonCancelled()
     ->order(null);
 
 // sort requests with the same requested type as this group to the top
 if ($group->type() == 'normal') {
-    $requests->order('CASE WHEN regalia_request.preferred_group IS NULL THEN 1 ELSE 2 END ASC');
+    $requesters->order('CASE WHEN regalia_request.preferred_group IS NULL THEN 1 ELSE 2 END ASC');
 } else {
-    $requests->order('CASE WHEN regalia_request.preferred_group LIKE ' . DB::pdo()->quote(AbstractMappedSelect::prepareLikePattern($group->type())) . ' THEN 1 ELSE 2 END ASC');
+    $requesters->order('CASE WHEN regalia_request.preferred_group LIKE ' . DB::pdo()->quote(AbstractMappedSelect::prepareLikePattern($group->type())) . ' THEN 1 ELSE 2 END ASC');
 }
 
 // order unassigned and oldest requests first
-$requests
+$requesters
     ->order('CASE WHEN regalia_request.assigned_order IS NULL THEN 1 ELSE 2 END ASC')
     ->order('regalia_request.id ASC');
 
 // filter out requests that are already being fulfilled by this order group
-$requests->leftJoin('regalia_order ON regalia_order.id = regalia_request.assigned_order')
+$requesters->leftJoin('regalia_order ON regalia_order.id = regalia_request.assigned_order')
     ->leftJoin('regalia_group on regalia_group.id = regalia_order.group_id')
     ->where('(regalia_group.id IS NULL OR regalia_group.id <> ?)', [$group->id()]);
 
 // group by identifier
-$requests->group('regalia_request.identifier');
+$requesters->group('regalia_request.identifier');
 
 // set up form
 $form = new FormWrapper('requests');
@@ -63,7 +63,7 @@ $form->button()->setText('Save changes');
 
 // set up table
 $table = new PaginatedTable(
-    $requests,
+    $requesters,
     function (RegaliaRequest $request) use ($form, $group): array {
         $requester = new RegaliaRequester($request->semester(), $request->identifier());
         if (!Regalia::validatePersonInfo($requester->identifier())) {

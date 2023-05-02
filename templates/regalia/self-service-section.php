@@ -27,21 +27,21 @@ $cancelledOrderCount = RegaliaOrders::select()
     ->cancelled()
     ->count();
 
-$requests = RegaliaRequests::semester($semester)
+$requesters = RegaliaRequests::semester($semester)
     ->where('identifier', $for);
-$requestCount = $requests->count();
+$requestCount = $requesters->count();
 
 $cancelledRequestCount = RegaliaRequests::semester($semester)
     ->where('identifier', $for)
     ->cancelled()
     ->count();
 
-if (!$orders->count() && !$requests->count()) return;
+if (!$orders->count() && !$requesters->count()) return;
 
 if ($orderCount) {
     echo "<h2>Rental orders placed</h2>";
     if ($cancelledRequestCount && !$cancelledOrderCount) {
-        if ($cancelledRequestCount == $requests->count()) {
+        if ($cancelledRequestCount == $requesters->count()) {
             Notifications::printNotice(
                 'Regalia cancellation requests recorded.<br>' .
                     'Your regalia rental will be cancelled soon if possible, as long as you have no RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
@@ -89,7 +89,7 @@ if ($orderCount) {
         }
     );
 } elseif ($cancelledRequestCount) {
-    if ($cancelledRequestCount == $requests->count()) {
+    if ($cancelledRequestCount == $requesters->count()) {
         Notifications::printNotice(
             'Regalia cancellation requests have been recorded.<br>' .
                 'No regalia rentals will be placed for you as long as you have no other RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
@@ -103,10 +103,10 @@ if ($orderCount) {
     }
 }
 
-if ($requests->count()) {
+if ($requesters->count()) {
     echo "<h2>Regalia requested for</h2>";
     echo new PaginatedTable(
-        $requests,
+        $requesters,
         function (RegaliaRequest $request): array {
             return [
                 $request->cancelled() ? '<span class="notification notification--error">CANCELLED</span>' : '<span class="notification notification--confirmation">ACTIVE</span>',

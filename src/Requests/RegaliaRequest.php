@@ -11,7 +11,10 @@ use Flatrr\FlatArray;
 
 class RegaliaRequest
 {
-    protected $id, $semester, $identifier, $preferred_group, $cancelled, $parent, $assigned_order, $data;
+    protected $id, $semester, $identifier, $preferred_group, $cancelled, $parent, $assigned_order;
+
+    /** @var string|FlatArray */
+    protected $data;
     protected $parent_value = false;
 
     public static function create(

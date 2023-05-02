@@ -17,12 +17,12 @@ use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
 use DigraphCMS_Plugins\unmous\regalia\Forms\InstitutionInput;
 use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
-$requests = Regalia::people()
+$requesters = Regalia::people()
     ->where('institution_notfound', '1')
     ->order('id asc');
 
 $table = new PaginatedTable(
-    $requests,
+    $requesters,
     function (array $row): array {
         // set up form
         $form = new FormWrapper('row_' . $row['id']);

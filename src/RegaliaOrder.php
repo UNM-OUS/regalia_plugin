@@ -19,7 +19,9 @@ class RegaliaOrder
     protected $degree_level, $degree_field;
     protected $inst_name, $inst_city, $inst_state;
     protected $color_band, $color_lining, $color_chevron;
-    protected $hat, $tam, $hood, $robe, $cancelled, $data;
+    protected $hat, $tam, $hood, $robe, $cancelled;
+    /** @var string|null|FlatArray */
+    protected $data;
     protected $created;
 
     protected function __construct()

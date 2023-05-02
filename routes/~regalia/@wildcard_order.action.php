@@ -49,19 +49,19 @@ if ($order->group()->cancellationLocked()) {
     Notifications::printNotice('Order group cancellations are locked');
 } else {
     echo "<p>Cancelling or uncancelling here will also immediately update the regalia rental request field value for all associated RSVPs.</p>";
-    $requests =  RegaliaRequests::select()
+    $requesters =  RegaliaRequests::select()
         ->where('regalia_request.assigned_order', $order->id());
     if ($order->cancelled()) {
-        echo (new CallbackLink(function () use ($order, $requests) {
-            while ($request = $requests->fetch()) {
+        echo (new CallbackLink(function () use ($order, $requesters) {
+            while ($request = $requesters->fetch()) {
                 $request->parent()->requestRegaliaUncancellation();
             }
             $order->setCancelled(false)->save();
         }, null, '_frame'))
             ->addChild('Un-cancel this order');
     } else {
-        echo (new CallbackLink(function () use ($order, $requests) {
-            while ($request = $requests->fetch()) {
+        echo (new CallbackLink(function () use ($order, $requesters) {
+            while ($request = $requesters->fetch()) {
                 $request->parent()->requestRegaliaCancellation();
             }
             $order->setCancelled(true)->save();
@@ -75,11 +75,11 @@ $person = null;
 if ($order->identifier()) {
     $person = PersonInfo::fetch($order->identifier());
     echo "<h2>For person <code>" . $order->identifier() . "</code></h2>";
-    $requests =  RegaliaRequests::select()
+    $requesters =  RegaliaRequests::select()
         ->where('regalia_request.assigned_order', $order->id());
     echo "<h3>Assigned to requests</h3>";
     echo new PaginatedTable(
-        $requests,
+        $requesters,
         function (RegaliaRequest $request): array {
             return [
                 sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType())
