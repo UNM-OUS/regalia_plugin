@@ -121,11 +121,7 @@ echo new SingleButton(
     function () use ($assignments, $group) {
         foreach ($assignments as $identifier => $extra) {
             $requester = new RegaliaRequester($group->semester(), $identifier);
-            foreach ($requester->requests() as $request) {
-                if ($request->orderID()) continue;
-                $request->setOrder($extra)
-                    ->save();
-            }
+            $requester->assignExtra($extra);
         }
         Notifications::flashConfirmation('Extra assignments saved');
         throw new RedirectException(new URL('extras:' . Context::url()->actionSuffix()));
