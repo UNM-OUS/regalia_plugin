@@ -116,6 +116,7 @@ foreach ($assignments as $identifier => $extra) {
 }
 echo '</table>';
 
+if (!$assignments) return;
 echo new SingleButton(
     'Save these extra assignments',
     function () use ($assignments, $group) {
