@@ -237,7 +237,7 @@ if (Context::arg('delete') != 1) {
     $buttons->addButton(new ButtonMenuButton('Yes, delete this order', function () use ($order) {
         $url = $order->group()->url();
         $order->delete();
-        Notifications::flashConfirmation(sprintf('%s #%s deleted', $order->type(), $order->id()));
+        Notifications::flashConfirmation(sprintf('%s deleted', $order->orderName()));
         throw new RedirectException($url);
     }, ['button--danger']));
     $buttons->addButton(new ButtonMenuButton('Cancel deletion', function () {

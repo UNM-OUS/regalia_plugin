@@ -43,7 +43,7 @@ class RegaliaOrderTable extends PaginatedTable
     public function regaliaCallback(RegaliaOrder $order): array
     {
         return [
-            sprintf('<a href="%s">%s #%s</a>', $order->url(), $order->type(), $order->id()),
+            sprintf('<a href="%s">%s</a>', $order->url(), $order->orderName()),
             $order->lastName(),
             $order->firstName(),
             $order->email() ? sprintf('<a href="mailto:%s">%s</a>', $order->email(), $order->email()) : '',
@@ -84,7 +84,7 @@ class RegaliaOrderTable extends PaginatedTable
     public function regaliaDownloadCallback(RegaliaOrder $order): array
     {
         return [
-            new LinkCell(sprintf('%s #%s', $order->type(), $order->id()), $order->url()),
+            new LinkCell($order->orderName(), $order->url()),
             $order->lastName(),
             $order->firstName(),
             $order->email(),

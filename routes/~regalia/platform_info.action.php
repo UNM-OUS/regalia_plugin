@@ -42,7 +42,7 @@ $table = new PaginatedTable(
             return sprintf('<a href="%s">%s</a>', $parent->url(), $parent->name());
         }, $requests);
         return [
-            sprintf('<a href="%s">%s #%s</a>', $order->url(), $order->type(), $order->id()),
+            sprintf('<a href="%s"></a>', $order->url(), $order->orderName()),
             $order->lastName(),
             $order->firstName(),
             $requests ? new PaginatedList($requests, null) : '',

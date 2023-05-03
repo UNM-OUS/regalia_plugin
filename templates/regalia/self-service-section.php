@@ -73,7 +73,7 @@ if ($orderCount) {
             return [
                 $order->cancelled() ? '<span class="notification notification--error">CANCELLED</span>' : '<span class="notification notification--confirmation">ORDERED</span>',
                 $order->group()->name(),
-                sprintf('%s #%s', $order->type(), $order->id()),
+                $order->orderName(),
                 $orderCount == 1
                     ? ''
                     : new PaginatedTable(

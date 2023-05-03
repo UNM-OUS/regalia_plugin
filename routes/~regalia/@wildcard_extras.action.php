@@ -93,9 +93,8 @@ foreach ($assignments as $identifier => $extra) {
     }
     echo '<tr>';
     printf(
-        '<td>%s #%s<br><span class="notification notification--%s">%s match</span></td>',
-        $extra->type(),
-        $extra->id(),
+        '<td>%s<br><span class="notification notification--%s">%s match</span></td>',
+        $extra->orderName(),
         $match_classes[$match],
         $match
     );

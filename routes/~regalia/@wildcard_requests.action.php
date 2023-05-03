@@ -151,7 +151,7 @@ $table = new PaginatedTable(
                 function (RegaliaRequest $request) {
                     return [
                         sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
-                        $request->order() ? sprintf('<a href="%s" target="_blank">%s #%s</a>', $request->order()->url(), $request->order()->type(), $request->order()->id()) : '<span class="notification notification--error">UNASSIGNED</span>',
+                        $request->order() ? sprintf('<a href="%s" target="_blank">%s</a>', $request->order()->url(), $request->order()->orderName()) : '<span class="notification notification--error">UNASSIGNED</span>',
                     ];
                 }
             ),
@@ -161,7 +161,7 @@ $table = new PaginatedTable(
                     ->where('identifier', $requester->identifier()),
                 function (RegaliaOrder $order): array {
                     return [
-                        sprintf('<a href="%s" target="_blank">%s #%s</a>', $order->url(), $order->type(), $order->id()),
+                        sprintf('<a href="%s" target="_blank">%s</a>', $order->url(), $order->orderName()),
                         sprintf('<a href="%s" target="_blank">%s</a>', $order->group()->url(), $order->group()->name()),
                     ];
                 }

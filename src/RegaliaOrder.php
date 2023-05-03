@@ -48,6 +48,23 @@ class RegaliaOrder
         }
     }
 
+    public function orderName(): string
+    {
+        return sprintf(
+            '%s #%s',
+            $this->type(),
+            substr(
+                str_pad(
+                    strval($this->id()),
+                    3,
+                    '0',
+                    STR_PAD_LEFT
+                ),
+                -3
+            )
+        );
+    }
+
     public function delete(): bool
     {
         // skip if group is locked
@@ -261,9 +278,9 @@ class RegaliaOrder
     public function genderHR(): ?string
     {
         static $hr = [
-            'M' => 'Male',
-            'F' => 'Female',
-            'O' => 'Other'
+        'M' => 'Male',
+        'F' => 'Female',
+        'O' => 'Other'
         ];
         if (!$this->gender()) return null;
         return @$hr[$this->gender()] ?? $this->gender();
