@@ -12,6 +12,7 @@ if ($for) $cancelUrl->arg('for', $for);
 
 /** @var DateTime|null */
 $orderDeadline = Regalia::orderDeadline(Context::fields()['semester']);
+if (!$orderDeadline) return;
 
 /** @var DateTime|null */
 $cancellationDeadline = Regalia::cancellationDeadline(Context::fields()['semester']);
