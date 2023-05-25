@@ -24,7 +24,7 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 <p>
     If you would like to cancel your regalia rental, you can use the
-    <a href="<?php echo (new URL('/cancel_my_regalia/'))->utm('regalia-email', 'auto-email', 'regalia-email-blurb'); ?>">cancel my regalia page</a>.
+    <a href="<?php echo (new URL('/cancel_my_regalia/')); ?>">cancel my regalia page</a>.
     <?php
     if ($deadline = Regalia::cancellationDeadline(Context::fields()['semester'] ?? Semesters::current())) {
         printf('Cancellation may not be possible after %s.', Format::datetime($deadline, true, true));

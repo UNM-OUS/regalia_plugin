@@ -7,7 +7,7 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 /** @var string|null */
 $for = Context::fields()['for'];
-$cancelUrl = (new URL('/cancel_my_regalia/'))->utm('graduation-site', 'website', 'regalia-deadline-blurb');
+$cancelUrl = (new URL('/cancel_my_regalia/'));
 if ($for) $cancelUrl->arg('for', $for);
 
 /** @var DateTime|null */

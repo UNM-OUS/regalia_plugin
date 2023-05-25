@@ -44,19 +44,19 @@ if ($orderCount) {
         if ($cancelledRequestCount == $requesters->count()) {
             Notifications::printNotice(
                 'Regalia cancellation requests recorded.<br>' .
-                    'Your regalia rental will be cancelled soon if possible, as long as you have no RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
+                'Your regalia rental will be cancelled soon if possible, as long as you have no RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
             );
         } else {
             if (Context::url()->route() != 'cancel_my_regalia') {
                 Notifications::printNotice(
                     'You still have one or more active regalia rental requests.<br>' .
-                        'If you would like to fully cancel your regalia rental this semester, you must either cancel all RSVPs or regalia requests, or use the <a href="' .
-                        (new URL('/cancel_my_regalia/?for=' . $for))->utm('graduation-site', 'website', 'self-service-regalia-cancellation-section') . '">regalia rental cancellation tool</a>.'
+                    'If you would like to fully cancel your regalia rental this semester, you must either cancel all RSVPs or regalia requests, or use the <a href="' .
+                    (new URL('/cancel_my_regalia/?for=' . $for)) . '">regalia rental cancellation tool</a>.'
                 );
             } else {
                 Notifications::printWarning(
                     'You have a mix of cancelled and uncancelled regalia requests.<br>' .
-                        'Any uncancelled RSVPs will have their regalia requests reactivated automatically unless you cancel all your RSVPs or regalia requests.'
+                    'Any uncancelled RSVPs will have their regalia requests reactivated automatically unless you cancel all your RSVPs or regalia requests.'
                 );
             }
         }
@@ -64,7 +64,7 @@ if ($orderCount) {
     if ($cancelledOrderCount) {
         Notifications::printNotice(
             'Your regalia rentals have been cancelled.<br>' .
-                'If you reactivate any of your requests your rental order will be reinstated soon afterwards if possible.'
+            'If you reactivate any of your requests your rental order will be reinstated soon afterwards if possible.'
         );
     }
     echo new PaginatedTable(
@@ -75,16 +75,16 @@ if ($orderCount) {
                 $order->group()->name(),
                 $order->orderName(),
                 $orderCount == 1
-                    ? ''
-                    : new PaginatedTable(
-                        RegaliaRequests::select()->where('assigned_order', $order->id()),
-                        function (RegaliaRequest $request): array {
-                            return [
-                                sprintf('<a href="%s">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
-                                $request->cancelled() ? '<span class="notification notification--error">CANCELLED</span>' : '<span class="notification notification--confirmation">ORDERED</span>',
-                            ];
-                        }
-                    )
+                ? ''
+                : new PaginatedTable(
+                    RegaliaRequests::select()->where('assigned_order', $order->id()),
+                    function (RegaliaRequest $request): array {
+                        return [
+                            sprintf('<a href="%s">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
+                            $request->cancelled() ? '<span class="notification notification--error">CANCELLED</span>' : '<span class="notification notification--confirmation">ORDERED</span>',
+                        ];
+                    }
+                )
             ];
         }
     );
@@ -92,13 +92,13 @@ if ($orderCount) {
     if ($cancelledRequestCount == $requesters->count()) {
         Notifications::printNotice(
             'Regalia cancellation requests have been recorded.<br>' .
-                'No regalia rentals will be placed for you as long as you have no other RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
+            'No regalia rentals will be placed for you as long as you have no other RSVPs with regalia requests and the Jostens cancellation deadline has not passed.'
         );
     } else {
         Notifications::printWarning(
             'You still have one or more active regalia rental requests.<br>' .
-                'If you would like to fully cancel your regalia rental this semester, you must either cancel all RSVPs that are requesting it or use the <a href="' .
-                (new URL('/cancel_my_regalia/?for=' . $for))->utm('graduation-site', 'website', 'self-service-regalia-cancellation-section') . '">regalia rental cancellation tool</a>.'
+            'If you would like to fully cancel your regalia rental this semester, you must either cancel all RSVPs that are requesting it or use the <a href="' .
+            (new URL('/cancel_my_regalia/?for=' . $for)) . '">regalia rental cancellation tool</a>.'
         );
     }
 }
