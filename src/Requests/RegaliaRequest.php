@@ -40,6 +40,11 @@ class RegaliaRequest
         );
     }
 
+    public function delete(): void
+    {
+        DB::query()->delete('regalia_request', $this->id())->execute();
+    }
+
     public function save(): bool
     {
         // update data and assigned order
