@@ -99,14 +99,14 @@ class RegaliaOrder
     /**
      * Cancel this order if the group is not locked.
      *
-     * @return void
+     * @return bool
      */
-    public function cancel(): void
+    public function cancel(): bool
     {
         // skip if group is locked
         if ($this->group()->ordersLocked() || $this->group()->cancellationLocked()) return false;
         // otherwise cancel
-        $this->setCancelled(true)
+        return $this->setCancelled(true)
             ->save();
     }
 
