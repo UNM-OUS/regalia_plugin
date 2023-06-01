@@ -40,9 +40,24 @@ class RegaliaRequest
         );
     }
 
+    /**
+     * When deleting a regalia request, we also cancel any orders associated
+     * with it if it was the only request for that order. Cancellation only
+     * happens if the group's cancellation is not locked.
+     *
+     * @return void
+     */
     public function delete(): void
     {
+        DB::beginTransaction();
+        if ($order = $this->order()) {
+            if (!$order->group()->cancellationLocked()) {
+                $requests = RegaliaRequests::select()->where('assigned_order', $order->id())->count();
+                if ($requests <= 1) $order->setCancelled(true);
+            }
+        }
         DB::query()->delete('regalia_request', $this->id())->execute();
+        DB::commit();
     }
 
     public function save(): bool
