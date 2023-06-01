@@ -51,10 +51,8 @@ class RegaliaRequest
     {
         DB::beginTransaction();
         if ($order = $this->order()) {
-            if (!$order->group()->cancellationLocked()) {
-                $requests = RegaliaRequests::select()->where('assigned_order', $order->id())->count();
-                if ($requests <= 1) $order->setCancelled(true);
-            }
+            $requests = RegaliaRequests::select()->where('assigned_order', $order->id())->count();
+            if ($requests <= 1) $order->cancel();
         }
         DB::query()->delete('regalia_request', $this->id())->execute();
         DB::commit();

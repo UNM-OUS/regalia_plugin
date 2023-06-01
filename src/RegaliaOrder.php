@@ -65,6 +65,12 @@ class RegaliaOrder
         );
     }
 
+    /**
+     * Delete this order if the group is not locked. Also unset its assignment
+     * to any requests.
+     *
+     * @return boolean
+     */
     public function delete(): bool
     {
         // skip if group is locked
@@ -77,9 +83,7 @@ class RegaliaOrder
         DB::query()
             ->update(
                 'regalia_request',
-                [
-                    'assigned_order' => null
-                ]
+                ['assigned_order' => null]
             )
             ->where('assigned_order', $this->id())
             ->execute();
@@ -92,9 +96,25 @@ class RegaliaOrder
         return $out;
     }
 
+    /**
+     * Cancel this order if the group is not locked.
+     *
+     * @return void
+     */
+    public function cancel(): void
+    {
+        // skip if group is locked
+        if ($this->group()->ordersLocked() || $this->group()->cancellationLocked()) return false;
+        // otherwise cancel
+        $this->setCancelled(true)
+            ->save();
+    }
+
     public function save(): bool
     {
         $update = [];
+        // call hooks
+        Dispatcher::dispatchEvent('onRegaliaOrderUpdate', [$this]);
         // ensure valid data
         static::assertObjectDataIsValid();
         // always update data, identifier, name, and email
@@ -278,9 +298,9 @@ class RegaliaOrder
     public function genderHR(): ?string
     {
         static $hr = [
-        'M' => 'Male',
-        'F' => 'Female',
-        'O' => 'Other'
+            'M' => 'Male',
+            'F' => 'Female',
+            'O' => 'Other'
         ];
         if (!$this->gender()) return null;
         return @$hr[$this->gender()] ?? $this->gender();
@@ -806,55 +826,58 @@ class RegaliaOrder
             $degree_level = null;
             $degree_field = null;
         }
-        // check that all data exists
+        // dispatch event that can update data array
+        $data = [
+            'group_id' => $group->id(),
+            'type' => $type,
+            'identifier' => $identifier,
+            'last_name' => $last_name,
+            'first_name' => $first_name,
+            'email' => $email,
+            'size_gender' => $size_gender,
+            'size_height' => $size_height,
+            'size_weight' => $size_weight,
+            'size_hat' => $size_hat,
+            'degree_level' => $degree_level,
+            'degree_field' => $degree_field,
+            'inst_name' => $inst_name,
+            'inst_city' => $inst_city,
+            'inst_state' => $inst_state,
+            'color_band' => $color_band,
+            'color_lining' => $color_lining,
+            'color_chevron' => $color_chevron,
+            'hat' => $hat,
+            'tam' => $tam,
+            'hood' => $hood,
+            'robe' => $robe,
+            'cancelled' => false,
+            'data' => json_encode($data),
+            'created' => time(),
+        ];
+        Dispatcher::dispatchEvent('onRegaliaOrderCreate', [&$data]);
+        // ensure data is all correct
         static::assertDataIsValid(
-            $hat,
-            $hood,
-            $robe,
-            $size_gender,
-            $size_height,
-            $size_weight,
-            $size_hat,
-            $degree_level,
-            $degree_field,
-            $inst_name,
-            $inst_city,
-            $inst_state,
-            $color_band,
-            $color_lining,
-            $color_chevron
+            $data['hat'],
+            $data['hood'],
+            $data['robe'],
+            $data['size_gender'],
+            $data['size_height'],
+            $data['size_weight'],
+            $data['size_hat'],
+            $data['degree_level'],
+            $data['degree_field'],
+            $data['inst_name'],
+            $data['inst_city'],
+            $data['inst_state'],
+            $data['color_band'],
+            $data['color_lining'],
+            $data['color_chevron']
         );
         // insert and return
         return RegaliaOrders::get(
             DB::query()->insertInto(
                 'regalia_order',
-                [
-                    'group_id' => $group->id(),
-                    'type' => $type,
-                    'identifier' => $identifier,
-                    'last_name' => $last_name,
-                    'first_name' => $first_name,
-                    'email' => $email,
-                    'size_gender' => $size_gender,
-                    'size_height' => $size_height,
-                    'size_weight' => $size_weight,
-                    'size_hat' => $size_hat,
-                    'degree_level' => $degree_level,
-                    'degree_field' => $degree_field,
-                    'inst_name' => $inst_name,
-                    'inst_city' => $inst_city,
-                    'inst_state' => $inst_state,
-                    'color_band' => $color_band,
-                    'color_lining' => $color_lining,
-                    'color_chevron' => $color_chevron,
-                    'hat' => $hat,
-                    'tam' => $tam,
-                    'hood' => $hood,
-                    'robe' => $robe,
-                    'cancelled' => false,
-                    'data' => json_encode($data),
-                    'created' => time(),
-                ]
+                $data
             )->execute()
         );
     }
