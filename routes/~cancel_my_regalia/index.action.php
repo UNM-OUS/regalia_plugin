@@ -15,7 +15,7 @@ Permissions::requireAuth();
 
 $netIDs = OUS::userNetIDs();
 if ($for = strip_tags(strtolower(Context::arg('for') ?? ''))) {
-    if (!in_array($for, $netIDs) && !Permissions::inMetaGroups(['regalia__edit', 'commencement__signupothers', 'convocation__signupothers'])) {
+    if (!in_array($for, $netIDs) && !Permissions::inMetaGroups(['regalia__edit', 'events__signupothers'])) {
         throw new RedirectException(new URL('./'));
     }
     $for = [$for];

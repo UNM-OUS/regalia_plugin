@@ -34,7 +34,8 @@ class Regalia extends AbstractPlugin
         $semester = Semesters::fromString($s->getBbCode())
             ?? Semesters::fromCode($s->getBbCode())
             ?? Semesters::current();
-        return Templates::render('regalia/deadline_blurb.php', ['semester' => $semester, 'for' => null]);
+        return '<!-- regalia deadline blurb -->'
+            . Templates::render('regalia/deadline_blurb.php', ['semester' => $semester, 'for' => null]);
     }
 
     public static function onShortCode_regalia_deadline(ShortcodeInterface $s): string
