@@ -6,6 +6,7 @@ use DateTime;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Plugins\AbstractPlugin;
 use DigraphCMS\UI\Format;
+use DigraphCMS\UI\Templates;
 use DigraphCMS\UI\UserMenu;
 use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
@@ -27,6 +28,14 @@ class Regalia extends AbstractPlugin
         'order:',
         'requests'
     ];
+
+    public static function onShortCode_regalia_blurb(ShortcodeInterface $s): string
+    {
+        $semester = Semesters::fromString($s->getBbCode())
+            ?? Semesters::fromCode($s->getBbCode())
+            ?? Semesters::current();
+        return Templates::render('regalia/deadline_blurb.php', ['semester' => $semester, 'for' => null]);
+    }
 
     public static function onShortCode_regalia_deadline(ShortcodeInterface $s): string
     {
