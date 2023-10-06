@@ -25,7 +25,7 @@ class RegaliaSizeField extends FIELDSET
         $this->addChild($this->height);
         $this->weight = new Field('Weight (pounds)');
         $this->weight->addClass('regalia-form__weight');
-        $this->weight->input()->setAttribute('type', 'number'); // @phpstan-ignore-line
+        $this->weight->input()->setAttribute('type', 'number');
         $this->addChild($this->weight);
         $this->gender = new Field('Gender', new SELECT([
             0 => '-- select --',
