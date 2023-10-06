@@ -4,3 +4,11 @@ regalia:
     dsn: null
     user: null
     pass: null
+
+email:
+  service_categories:
+    regalia-info-request: true
+  categories:
+    regalia-info-request:
+      label: Regalia info request
+      description: Manually-created requests for users' regalia order needs
