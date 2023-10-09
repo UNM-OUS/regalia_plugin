@@ -26,7 +26,7 @@ $identifier = (new Field('NetID or email', new EmailOrNetIDInput()))
     ->setRequired(true)
     ->addForm($form);
 
-$email = (new Field('Additional/alternate email', new Email()))
+$additional_email = (new Field('Additional/alternate email', new Email()))
     ->addTip('The email or NetID above will always be included, but you can use this field to include an additional or alternate address, such as for HSC users or to include someone\'s assistant.')
     ->setRequired(false)
     ->addForm($form);

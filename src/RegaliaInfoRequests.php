@@ -9,6 +9,7 @@ use DigraphCMS\Email\Emails;
 use DigraphCMS\RichContent\RichContent;
 use DigraphCMS\UI\Templates;
 use DigraphCMS\URL\URL;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
 
 class RegaliaInfoRequests
 {
@@ -32,6 +33,27 @@ class RegaliaInfoRequests
         return $item->value();
     }
 
+    public static function notifyCreator(string $uuid): void
+    {
+        $item = static::datastore()->get($uuid);
+        if (!$item) return;
+        $email = $item->createdBy()->primaryEmail();
+        if (!$email) return;
+        $name = PersonInfo::getFullNameFor(static::identifier($uuid));
+        if ($name) $name = "$name ($uuid)";
+        else $name = $uuid;
+        Emails::queue(
+            new Email(
+                'service',
+                'Regalia info collected for ' . $name,
+                $email,
+                $item->createdBy(),
+                null,
+                Templates::render('request_notification.php', ['name' => $name])
+            )
+        );
+    }
+
     public static function url(string $uuid): URL
     {
         return new URL('/request_size/request:' . $uuid);
@@ -49,7 +71,9 @@ class RegaliaInfoRequests
         );
         // send email
         $message = Templates::render('regalia/request_message.php', ['url' => static::url($uuid)]);
-        $emails = [$identifier];
+        $emails = [];
+        if (str_contains('@', $identifier)) $emails[] = $identifier;
+        else $emails[] = "$identifier@unm.edu";
         if ($additional_email) $emails[] = $additional_email;
         $emails = array_unique(array_map(strtolower(...), $emails));
         foreach ($emails as $email) {
