@@ -69,7 +69,7 @@ if ($form->ready()) {
                         'institution_color_chevron1' => $row['chevron 1'],
                         'institution_color_chevron2' => $row['chevron 2'],
                         'institution_color_chevron3' => $row['chevron 3'],
-                        'institution_deprecated' => false
+                        'institution_deprecated' => 0
                     ],
                     $existing['id']
                 )->execute();
@@ -88,7 +88,7 @@ if ($form->ready()) {
                         'institution_color_chevron1' => $row['chevron 1'],
                         'institution_color_chevron2' => $row['chevron 2'],
                         'institution_color_chevron3' => $row['chevron 3'],
-                        'institution_deprecated' => false
+                        'institution_deprecated' => 0
                     ],
                 )->execute();
                 // create the default reference to this institution
@@ -101,7 +101,7 @@ if ($form->ready()) {
                             $row['st'] ? strtoupper($row['st']) : false
                         ])),
                         'jostens_id' => $id,
-                        'deprecated' => false
+                        'deprecated' => 0
                     ]
                 )->execute();
             }
