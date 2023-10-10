@@ -67,6 +67,9 @@ $table = new PaginatedTable(
                 . ($row['institution_deprecated'] ? ' <strong>[DEPRECATED]</strong>' : ''),
             $row['color_lining'],
             $row['color_chevron'],
+            $row['jostens_name'],
+            $row['jostens_city'],
+            $row['jostens_state'],
 
         ];
     },
@@ -75,6 +78,9 @@ $table = new PaginatedTable(
         new ColumnStringFilteringHeader('Label', 'label'),
         'Lining',
         'Chevron',
+        'Jostens Name',
+        'Jostens City',
+        'Jostens St',
     ]
 );
 

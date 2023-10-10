@@ -36,7 +36,8 @@ if ($form->ready()) {
     Regalia::query()->update(
         'jostens_institution',
         ['institution_deprecated' => true]
-    )->where('institution_deprecated <> 1')
+    )
+        ->where('institution_deprecated <> 1')
         ->execute();
     // create a deferred execution job to process spreadsheet row by row
     $job = new SpreadsheetJob(
@@ -53,14 +54,16 @@ if ($form->ready()) {
             // fetch existing institution with this name, if applicable
             $existing = Regalia::query()
                 ->from('jostens_institution')
-                ->where('institution_name = ?', [$row['school name']])
-                ->where('institution_city = ?', [$row['city']])
-                ->where('institution_state = ?', [$row['st']])
+                ->where('institution_name', $row['school name'])
+                ->where('institution_city', $row['city'])
+                ->where('institution_state', $row['st'])
                 ->limit(1)
                 ->fetch();
             // if an institution with this name/city/state exists, update it,
             // set its colors to what's in the hood book and deprecation to false
             if ($existing) {
+                // update existing institution, there's no need to create a reference
+                // because any that reference it should already exist
                 Regalia::query()->update(
                     'jostens_institution',
                     [
@@ -71,7 +74,7 @@ if ($form->ready()) {
                         'institution_color_chevron3' => $row['chevron 3'],
                         'institution_deprecated' => 0
                     ],
-                    $existing['id']
+                    intval($existing['id'])
                 )->execute();
             }
             // otherwise insert a new institution
