@@ -14,7 +14,7 @@
         "${workspaceRoot}/demo/index.php"
       ],
       "cwd": "${workspaceRoot}/demo",
-      "port": 0,
+      "port": 9003,
       "serverReadyAction": {
         "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
         "uriFormat": "http://localhost:%s",
@@ -22,7 +22,7 @@
       },
       "env": {
         "XDEBUG_MODE": "debug,develop",
-        "XDEBUG_CONFIG": "client_port=${port}"
+        "XDEBUG_CONFIG": "client_port=9003"
       }
     }
   ]
