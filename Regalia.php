@@ -152,7 +152,6 @@ class Regalia extends AbstractPlugin
         if ($person['needs_robe'] == 1) {
             if (!$person['size_height']) return false;
             if (!$person['size_weight']) return false;
-            if (!$person['size_gender']) return false;
             if (!$person['degree_level']) return false;
         }
         // hood validation

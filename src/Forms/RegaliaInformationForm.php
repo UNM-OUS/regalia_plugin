@@ -69,11 +69,10 @@ class RegaliaInformationForm extends DIV
                 $div->addChild('<div><strong>Alma mater: </strong> Marked as "not found." Someone may contact you for more information.</div>');
             }
             if ($info['needs_robe'] && $info['size_height']) $div->addChild(sprintf(
-                '<div><strong>Robe size: </strong> %s\' %s", %slbs%s</div>',
+                '<div><strong>Robe size: </strong> %s\' %s", %slbs</div>',
                 floor($info['size_height'] / 12),
                 $info['size_height'] % 12,
                 abs(intval($info['size_weight'])),
-                ['M' => ', Masculine', 'F' => ', Feminine', 'O' => ''][$info['size_gender']],
             ));
             if ($info['needs_hat'] && $info['size_hat']) $div->addChild(sprintf(
                 '<div><strong>Hat size: </strong> %s</div>',
@@ -145,7 +144,6 @@ class RegaliaInformationForm extends DIV
 
         $size->height()->addValidator($robeValidator);
         $size->weight()->addValidator($robeValidator);
-        $size->gender()->addValidator($robeValidator);
         $degree->type()->addValidator($robeValidator);
 
         $degree->type()->addValidator($hoodValidator);
@@ -186,7 +184,6 @@ class RegaliaInformationForm extends DIV
             $size->setDefault([
                 'height' => $person['size_height'],
                 'weight' => $person['size_weight'],
-                'gender' => $person['size_gender'],
                 'hat' => $person['size_hat']
             ]);
         }
@@ -209,7 +206,6 @@ class RegaliaInformationForm extends DIV
                 'needs_hood' => in_array('hood', $parts->value()) ? 1 : 0,
                 'size_height' => $size->value()['height'],
                 'size_weight' => $size->value()['weight'],
-                'size_gender' => $size->value()['gender'],
                 'size_hat' => $size->value()['hat']
             ];
             PersonInfo::setFor(

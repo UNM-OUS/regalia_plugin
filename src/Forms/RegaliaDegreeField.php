@@ -40,12 +40,14 @@ class RegaliaDegreeField extends FIELDSET
     public function setDefault(array $value = null)
     {
         if ($value) {
-            $preset = Regalia::preset($value['preset_id']);
-            if ($preset['field_id']) {
-                $this->type->setDefault('[preset]' . $preset['id']);
-            } else {
-                $this->type->setDefault($preset['id']);
-                $this->field->setDefault($value['field_id']);
+            $preset = Regalia::preset(@$value['preset_id']);
+            if ($preset) {
+                if ($preset['field_id']) {
+                    $this->type->setDefault('[preset]' . $preset['id']);
+                } else {
+                    $this->type->setDefault($preset['id']);
+                    $this->field->setDefault($value['field_id']);
+                }
             }
         }
         return $this;

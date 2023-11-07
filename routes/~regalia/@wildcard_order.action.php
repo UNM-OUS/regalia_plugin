@@ -128,7 +128,6 @@ if ($order->group()->ordersLocked()) {
         ->setDefault([
             'height' => $order->height(),
             'weight' => $order->weight(),
-            'gender' => $order->gender(),
             'hat' => $order->hatSize()
         ]);
     $form->addChild($size);
@@ -139,7 +138,6 @@ if ($order->group()->ordersLocked()) {
             ->setHood(in_array('hood', $parts->value()))
             ->setHeight($size->value()['height'])
             ->setWeight($size->value()['weight'])
-            ->setGender($size->value()['gender'])
             ->setHatSize($size->value()['hat'])
             ->save();
         if ($order->identifier()) {
@@ -150,7 +148,6 @@ if ($order->group()->ordersLocked()) {
                     'needs_hood' => in_array('hood', $parts->value()) ? 1 : 0,
                     'size_height' => $size->value()['height'],
                     'size_weight' => $size->value()['weight'],
-                    'size_gender' => $size->value()['gender'],
                     'size_hat' => $size->value()['hat']
                 ])
                 ->where('identifier', $order->identifier())

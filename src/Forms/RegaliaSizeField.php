@@ -13,8 +13,6 @@ class RegaliaSizeField extends FIELDSET
     /** @var Field */
     protected $weight;
     /** @var Field */
-    protected $gender;
-    /** @var Field */
     protected $hat;
 
     public function __construct(string $label = 'Regalia size')
@@ -27,14 +25,6 @@ class RegaliaSizeField extends FIELDSET
         $this->weight->addClass('regalia-form__weight');
         $this->weight->input()->setAttribute('type', 'number');
         $this->addChild($this->weight);
-        $this->gender = new Field('Gender', new SELECT([
-            0 => '-- select --',
-            'M' => 'Male',
-            'F' => 'Female',
-            'O' => 'Other/prefer not to answer'
-        ]));
-        $this->gender->addClass('regalia-form__gender');
-        $this->addChild($this->gender);
         $this->hat = new Field('Hat size', new SELECT([
             0 => '-- select --',
             'XS' => 'XS: 19-1/4" - 20-1/8"',
@@ -58,11 +48,6 @@ class RegaliaSizeField extends FIELDSET
         return $this->weight;
     }
 
-    public function gender(): Field
-    {
-        return $this->gender;
-    }
-
     public function hat(): Field
     {
         return $this->hat;
@@ -72,7 +57,6 @@ class RegaliaSizeField extends FIELDSET
     {
         $this->height->setDefault($value['height']);
         $this->weight->setDefault($value['weight'] ? abs(intval($value['weight'])) : null);
-        $this->gender->setDefault($value['gender']);
         $this->hat->setDefault($value['hat']);
         return $this;
     }
@@ -82,7 +66,6 @@ class RegaliaSizeField extends FIELDSET
         return [
             'height' => $this->height->value() ? $this->height->value() : null,
             'weight' => $this->weight->value() ? abs($this->weight->value()) : null,
-            'gender' => $this->gender->value() ? $this->gender->value() : null,
             'hat' => $this->hat->value() ? $this->hat->value() : null
         ];
     }
