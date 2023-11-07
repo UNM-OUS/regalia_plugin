@@ -35,7 +35,7 @@ if ($form->ready()) {
     // row by row as the spreadsheet processes
     Regalia::query()->update(
         'jostens_institution',
-        ['institution_deprecated' => true]
+        ['institution_deprecated' => 1]
     )
         ->where('institution_deprecated <> 1')
         ->execute();
@@ -51,19 +51,20 @@ if ($form->ready()) {
                 },
                 $row
             );
+            // fallback for when state is labelled "st"
+            $row['state'] = @$row['state'] ?? @$row['st'];
             // fetch existing institution with this name, if applicable
             $existing = Regalia::query()
                 ->from('jostens_institution')
                 ->where('institution_name', $row['school name'])
                 ->where('institution_city', $row['city'])
-                ->where('institution_state', $row['st'])
-                ->limit(1)
+                ->where('institution_state', $row['state'])
                 ->fetch();
             // if an institution with this name/city/state exists, update it,
             // set its colors to what's in the hood book and deprecation to false
             if ($existing) {
                 // update existing institution, there's no need to create a reference
-                // because any that reference it should already exist
+                // because any that reference to it should already exist
                 Regalia::query()->update(
                     'jostens_institution',
                     [
@@ -85,7 +86,7 @@ if ($form->ready()) {
                     [
                         'institution_name' => $row['school name'],
                         'institution_city' => $row['city'],
-                        'institution_state' => $row['st'],
+                        'institution_state' => $row['state'],
                         'institution_color_lining1' => $row['lining 1'],
                         'institution_color_lining2' => $row['lining 2'],
                         'institution_color_chevron1' => $row['chevron 1'],
@@ -94,14 +95,14 @@ if ($form->ready()) {
                         'institution_deprecated' => 0
                     ],
                 )->execute();
-                // create the default reference to this institution
+                // also create the default reference to this institution
                 Regalia::query()->insertInto(
                     'regalia_institution',
                     [
                         'label' => implode(', ', array_filter([
                             ucwords(strtolower($row['school name'])),
                             $row['city'] ? ucwords(strtolower($row['city'])) : false,
-                            $row['st'] ? strtoupper($row['st']) : false
+                            $row['state'] ? strtoupper($row['state']) : false
                         ])),
                         'jostens_id' => $id,
                         'deprecated' => 0
