@@ -20,7 +20,6 @@
     const size = form.getElementsByClassName('regalia-form__size')[0];
     const size_height = size.getElementsByClassName('regalia-form__height')[0];
     const size_weight = size.getElementsByClassName('regalia-form__weight')[0];
-    const size_gender = size.getElementsByClassName('regalia-form__gender')[0];
     const size_hat = size.getElementsByClassName('regalia-form__hat')[0];
     const fn_update = () => {
       // set sub-fields to display or hide based on parts that are checked
@@ -29,8 +28,7 @@
       size.style.display = (part_hat.checked || part_robe.checked) ? null : 'none';
       size_hat.style.display = part_hat.checked ? null : 'none';
       size_height.style.display =
-        size_weight.style.display =
-        size_gender.style.display = part_robe.checked ? null : 'none';
+        size_weight.style.display = part_robe.checked ? null : 'none';
     };
     fn_update();
     parts.addEventListener('change', fn_update);

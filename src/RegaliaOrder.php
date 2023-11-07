@@ -15,7 +15,7 @@ class RegaliaOrder
     protected $id, $group_id, $type;
     protected $semester, $group_type, $group_tams; // joined from regalia_group
     protected $identifier, $email, $last_name, $first_name;
-    protected $size_gender, $size_height, $size_weight, $size_hat;
+    protected $size_height, $size_weight, $size_hat;
     protected $degree_level, $degree_field;
     protected $inst_name, $inst_city, $inst_state;
     protected $color_band, $color_lining, $color_chevron;
@@ -29,7 +29,6 @@ class RegaliaOrder
         // remove unnecessary data
         if (!$this->hat) $this->size_hat = null;
         if (!$this->robe) {
-            $this->size_gender = null;
             $this->size_height = null;
             $this->size_weight = null;
         }
@@ -127,7 +126,6 @@ class RegaliaOrder
         $update['group_id'] = $this->group_id;
         // only update sizes and such if unlocked
         if (!$this->group()->ordersLocked()) {
-            $update['size_gender'] = $this->gender();
             $update['size_height'] = $this->height();
             $update['size_weight'] = $this->weight();
             $update['size_hat'] = $this->hatSize();
@@ -293,32 +291,6 @@ class RegaliaOrder
     public function firstName(): ?string
     {
         return $this->first_name;
-    }
-
-    public function genderHR(): ?string
-    {
-        static $hr = [
-            'M' => 'Male',
-            'F' => 'Female',
-            'O' => 'Other'
-        ];
-        if (!$this->gender()) return null;
-        return @$hr[$this->gender()] ?? $this->gender();
-    }
-
-    /**
-     * @param string|null $gender
-     * @return static
-     */
-    public function setGender(?string $gender)
-    {
-        $this->size_gender = $gender;
-        return $this;
-    }
-
-    public function gender(): ?string
-    {
-        return $this->size_gender;
     }
 
     /**
@@ -624,7 +596,6 @@ class RegaliaOrder
             PersonInfo::getFirstNameFor($person_identifier),
             PersonInfo::getLastNameFor($person_identifier),
             PersonInfo::getFor($person_identifier, 'email'),
-            $person['size_gender'],
             $person['size_height'],
             $person['size_weight'],
             $person['size_hat'],
@@ -660,7 +631,6 @@ class RegaliaOrder
             PersonInfo::getFirstNameFor($person_identifier),
             PersonInfo::getLastNameFor($person_identifier),
             PersonInfo::getFor($person_identifier, 'email'),
-            $person['size_gender'],
             $person['size_height'],
             $person['size_weight'],
             $person['size_hat'],
@@ -686,7 +656,6 @@ class RegaliaOrder
             $this->hat(),
             $this->hood(),
             $this->robe(),
-            $this->gender(),
             $this->height(),
             $this->weight(),
             $this->hatSize(),
@@ -705,7 +674,6 @@ class RegaliaOrder
         bool $hat,
         bool $hood,
         bool $robe,
-        ?string $size_gender,
         ?int $size_height,
         ?int $size_weight,
         ?string $size_hat,
@@ -733,7 +701,6 @@ class RegaliaOrder
         }
         if ($robe) {
             if (!$degree_level) throw new \Exception("Degree level is required to order a robe");
-            if (!$size_gender) throw new \Exception("Gender is required to order a robe");
             if (!$size_height) throw new \Exception("Height is required to order a robe");
             if (!$size_weight) throw new \Exception("Weight is required to order a robe");
         }
@@ -743,7 +710,6 @@ class RegaliaOrder
         bool $hat,
         bool $hood,
         bool $robe,
-        ?string $size_gender,
         ?int $size_height,
         ?int $size_weight,
         ?string $size_hat,
@@ -761,7 +727,6 @@ class RegaliaOrder
                 $hat,
                 $hood,
                 $robe,
-                $size_gender,
                 $size_height,
                 $size_weight,
                 $size_hat,
@@ -787,7 +752,6 @@ class RegaliaOrder
         ?string $first_name,
         ?string $last_name,
         ?string $email,
-        ?string $size_gender,
         ?int $size_height,
         ?int $size_weight,
         ?string $size_hat,
@@ -809,7 +773,6 @@ class RegaliaOrder
         // remove unnecessary data
         if (!$hat) $size_hat = null;
         if (!$robe) {
-            $size_gender = null;
             $size_height = null;
             $size_weight = null;
         }
@@ -834,7 +797,6 @@ class RegaliaOrder
             'last_name' => $last_name,
             'first_name' => $first_name,
             'email' => $email,
-            'size_gender' => $size_gender,
             'size_height' => $size_height,
             'size_weight' => $size_weight,
             'size_hat' => $size_hat,
@@ -860,7 +822,6 @@ class RegaliaOrder
             $data['hat'],
             $data['hood'],
             $data['robe'],
-            $data['size_gender'],
             $data['size_height'],
             $data['size_weight'],
             $data['size_hat'],

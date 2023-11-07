@@ -49,7 +49,7 @@ class RegaliaInfoRequests
                 $email,
                 $item->createdBy(),
                 null,
-                Templates::render('request_notification.php', ['name' => $name])
+                Templates::render('/regalia/request_notification.php', ['name' => $name])
             )
         );
     }
@@ -86,7 +86,7 @@ class RegaliaInfoRequests
         }
     }
 
-    protected static function datastore(): DatastoreGroup
+    public static function datastore(): DatastoreGroup
     {
         static $group;
         return $group
