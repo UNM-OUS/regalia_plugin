@@ -68,7 +68,14 @@ class RegaliaRequester
     {
         if ($order->type() != 'extra') return $this;
         $person = PersonInfo::fetch($this->identifier());
-        $order->setEmail($person['email'])
+        $email = $person['email'];
+        if (!$email) {
+            if (str_contains($this->identifier(), '@'))
+                $email = $this->identifier();
+            else
+                $email = $this->identifier() . '@unm.edu';
+        }
+        $order->setEmail($email)
             ->setFirstName($person->firstName() ?? $this->identifier())
             ->setLastName($person->lastName() ?? $this->identifier())
             ->setIdentifier($this->identifier())
