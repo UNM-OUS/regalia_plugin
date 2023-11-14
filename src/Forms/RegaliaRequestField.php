@@ -5,6 +5,9 @@ namespace DigraphCMS_Plugins\unmous\regalia\Forms;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
 use DigraphCMS\HTML\Forms\FIELDSET;
 use DigraphCMS\HTML\Forms\FormWrapper;
+use DigraphCMS\UI\Notifications;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\OUS;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
 use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class RegaliaRequestField extends FIELDSET
@@ -22,6 +25,20 @@ class RegaliaRequestField extends FIELDSET
         $this->infoForm->addClass('regalia-request-field__info-form');
         $this->addChild($this->infoForm);
         $this->addClass('regalia-request-field');
+        // display notification if this form is not for the current user and
+        // the person the form is for has previously opted out of regalia
+        if (!str_contains($for, '@')) {
+            $netIds = OUS::userNetIDs();
+            if (!in_array($for, $netIds)) {
+                if (PersonInfo::getFor($for, 'regalia') === false) {
+                    Notifications::notice(sprintf(
+                        "The person you are filling this form out for <kbd>%s</kbd> has previously opted out of regalia rental. " .
+                            "Unless you know otherwise, it is likely that they own their own regalia and do not need a rental.",
+                        $for
+                    ));
+                }
+            }
+        }
         // validator to require either opting out or an existing person record
         $this->needsRegalia->addValidator(function () {
             if (!$this->needsRegalia->value()) return null;

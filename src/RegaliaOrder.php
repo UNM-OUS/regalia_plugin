@@ -8,6 +8,7 @@ use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\URL\URL;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Semester;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
 use Flatrr\FlatArray;
 
 class RegaliaOrder
@@ -270,7 +271,7 @@ class RegaliaOrder
 
     public function semester(): Semester
     {
-        return Semester::fromCode($this->semester);
+        return Semesters::fromCode($this->semester);
     }
 
     public function identifier(): ?string
@@ -560,7 +561,6 @@ class RegaliaOrder
             null,
             null,
             null,
-            'O',
             $size_height,
             $size_weight,
             $size_hat,
