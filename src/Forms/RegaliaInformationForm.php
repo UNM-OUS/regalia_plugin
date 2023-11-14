@@ -79,7 +79,7 @@ class RegaliaInformationForm extends DIV
                 $info['size_hat']
             ));
             if (!Regalia::validatePersonInfo($this->for, true)) {
-                $div->addChild('<div class="notification notification--warning">Regalia information for <code>' . $this->for . '</code> needs to be updated due to changes to the form or available options</div>');
+                $div->addChild('<div class="notification notification--warning">Regalia information for <kbd>' . $this->for . '</kbd> needs to be updated due to changes to the form or available options</div>');
                 $div->addChild(sprintf('<a href="%s" class="button">Update regalia information</a>', $editURL));
             } else {
                 $div->addChild(sprintf('<p><small><a href="%s">Edit regalia information</a></small></p>', $editURL));

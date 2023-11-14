@@ -27,7 +27,7 @@ if (!$for) Notifications::printError('No user specified');
 
 foreach ($for as $identifier) {
     echo "<div class='card card--light navigation-frame navigation-frame--stateless' id='cancel-regalia-" . md5($identifier) . "'>";
-    echo "<h1>" . Semesters::current() . " regalia for <code>$identifier</code></h1>";
+    echo "<h1>" . Semesters::current() . " regalia for <kbd>$identifier</kbd></h1>";
     $requester = new RegaliaRequester(Semesters::current(), $identifier);
     if (!$requester->requests()) Notifications::printConfirmation('No regalia requests have been recorded, there is nothing to cancel');
     foreach ($requester->requests() as $request) {

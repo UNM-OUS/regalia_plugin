@@ -19,8 +19,8 @@ Context::response()->template('minimal.php');
 $id = RegaliaInfoRequests::identifier($uuid);
 
 $name = PersonInfo::getFullNameFor($id);
-if ($name) $name = "$name (<code>$id</code>)";
-else $name = "<code>$id</code>";
+if ($name) $name = "$name (<kbd>$id</kbd>)";
+else $name = "<kbd>$id</kbd>";
 echo "<h1>Regalia information for:<br>$name</h1>";
 
 $form = new FormWrapper();
@@ -38,7 +38,7 @@ if ($form->ready()) {
     // send email to creator
     RegaliaInfoRequests::notifyCreator($uuid);
     // flash and bounce to home
-    Notifications::flashConfirmation("Thank you for entering your regalia needs, they have been saved and will be used for future regalia orders for <code>$id</code>");
+    Notifications::flashConfirmation("Thank you for entering your regalia needs, they have been saved and will be used for future regalia orders for <kbd>$id</kbd>");
     throw new RedirectException(new URL('/'));
 }
 

@@ -74,7 +74,7 @@ if ($order->group()->cancellationLocked()) {
 $person = null;
 if ($order->identifier()) {
     $person = PersonInfo::fetch($order->identifier());
-    echo "<h2>For person <code>" . $order->identifier() . "</code></h2>";
+    echo "<h2>For person <kbd>" . $order->identifier() . "</kbd></h2>";
     $requesters =  RegaliaRequests::select()
         ->where('regalia_request.assigned_order', $order->id());
     echo "<h3>Assigned to requests</h3>";
