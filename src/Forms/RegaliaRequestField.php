@@ -32,7 +32,7 @@ class RegaliaRequestField extends FIELDSET
             if (!in_array($for, $netIds)) {
                 if (PersonInfo::getFor($for, 'regalia') === false) {
                     Notifications::notice(sprintf(
-                        "The person you are filling this form out for <kbd>%s</kbd> has previously opted out of regalia rental. " .
+                        "The person you are filling this form out for (<kbd>%s</kbd>) has previously opted out of regalia rental. " .
                             "Unless you know otherwise, it is likely that they own their own regalia and do not need a rental.",
                         $for
                     ));
