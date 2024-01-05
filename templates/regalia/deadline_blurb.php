@@ -21,7 +21,8 @@ $tbd = '<span class="notification notification--neutral">date TBD</span>';
 ?>
 <h2>Faculty regalia rental deadlines</h2>
 <p>
-    Personalized regalia orders <?php echo ($orderDeadline && ($orderDeadline->getTimestamp() < time())) ? 'were' : 'are'; ?>    scheduled to be ordered from Jostens
+    Personalized regalia orders <?php echo ($orderDeadline && ($orderDeadline->getTimestamp() < time())) ? 'were' : 'are'; ?>
+    scheduled to be ordered from Jostens
     <strong><?php echo $orderDeadline ? Format::date($orderDeadline) : $tbd; ?></strong>.
     Any orders placed after will be placed on a waitlist and be filled using extra regalia in the closest available size.
 </p>

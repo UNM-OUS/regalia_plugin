@@ -9,18 +9,23 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\HTML\Forms\InputInterface;
 use DigraphCMS\HTML\Tag;
 use DigraphCMS\HTTP\RedirectException;
+use DigraphCMS\UI\Format;
 use DigraphCMS\URL\URL;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\Semester;
 use DigraphCMS_Plugins\unmous\regalia\Regalia;
+use DigraphCMS_Plugins\unmous\regalia\Requests\RegaliaRequester;
 
 class RegaliaInformationForm extends DIV
 {
     protected $for;
+    protected $semester;
     protected $form;
 
-    public function __construct(string $for)
+    public function __construct(string $for, Semester $semester = null)
     {
         $this->for = $for;
+        $this->semester = $semester;
         $this->addClass('navigation-frame navigation-frame--stateless');
         $this->setID('regalia-information-form--' . crc32($for));
     }
@@ -28,6 +33,26 @@ class RegaliaInformationForm extends DIV
     public function setForm(FormWrapper $form)
     {
         $this->form = $form;
+    }
+
+    protected function notifications(): string
+    {
+        // display notification if regalia deadline has passed
+        if ($this->semester) {
+            $deadline = Regalia::orderDeadline($this->semester);
+            $existing = new RegaliaRequester($this->semester, $this->for);
+            if ($deadline && $deadline->getTimestamp() < time() && $existing->requests()) {
+                return sprintf(
+                    "<div class='notification notification--warning'>" .
+                        "The %s deadline for ordering personalized regalia was %s. " .
+                        "This order will be placed on a waitlist to be filled with an extra set of UNM PhD regalia in the closest available size." .
+                        "</div>",
+                    $this->semester,
+                    Format::date($deadline)
+                );
+            }
+        }
+        return 'NO NOTIFICATIONS';
     }
 
     protected function currentChildObject(): Tag
@@ -233,7 +258,10 @@ class RegaliaInformationForm extends DIV
     public function children(): array
     {
         return array_merge(
-            [$this->currentChildObject()],
+            [
+                $this->notifications(),
+                $this->currentChildObject()
+            ],
             parent::children()
         );
     }

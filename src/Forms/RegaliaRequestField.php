@@ -8,20 +8,21 @@ use DigraphCMS\HTML\Forms\FormWrapper;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\OUS;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\Semester;
 use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class RegaliaRequestField extends FIELDSET
 {
     protected $for, $infoForm, $needsRegalia;
 
-    public function __construct(string $label, string $for)
+    public function __construct(string $label, string $for, Semester $semester = null)
     {
         parent::__construct($label);
         $this->for = $for;
         $this->needsRegalia = new CheckboxField('I need to rent regalia');
         $this->needsRegalia->addClass('regalia-request-field__needs-regalia');
         $this->addChild($this->needsRegalia);
-        $this->infoForm = new RegaliaInformationForm($for);
+        $this->infoForm = new RegaliaInformationForm($for,$semester);
         $this->infoForm->addClass('regalia-request-field__info-form');
         $this->addChild($this->infoForm);
         $this->addClass('regalia-request-field');
