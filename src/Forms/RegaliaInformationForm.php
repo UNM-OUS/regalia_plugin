@@ -48,10 +48,10 @@ class RegaliaInformationForm extends DIV
         }
         // display notification
         return sprintf(
-            "<div class='notification notification--warning'>" .
-                "The %s deadline for ordering personalized regalia was %s. " .
+            "<div class='notification notification--warning'><p>" .
+                "The %s deadline for ordering personalized regalia was %s.<br>" .
                 "This order will be placed on a waitlist to be filled with an extra set of UNM PhD regalia in the closest available size." .
-                "</div>",
+                "</p></div>",
             $this->semester,
             Format::date($deadline)
         );
