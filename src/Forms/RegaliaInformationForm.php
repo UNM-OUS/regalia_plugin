@@ -37,22 +37,24 @@ class RegaliaInformationForm extends DIV
 
     protected function notifications(): string
     {
-        // display notification if regalia deadline has passed
-        if ($this->semester) {
-            $deadline = Regalia::orderDeadline($this->semester);
-            $existing = new RegaliaRequester($this->semester, $this->for);
-            if ($deadline && $deadline->getTimestamp() < time() && $existing->requests()) {
-                return sprintf(
-                    "<div class='notification notification--warning'>" .
-                        "The %s deadline for ordering personalized regalia was %s. " .
-                        "This order will be placed on a waitlist to be filled with an extra set of UNM PhD regalia in the closest available size." .
-                        "</div>",
-                    $this->semester,
-                    Format::date($deadline)
-                );
-            }
+        if (!$this->semester) return '';
+        $deadline = Regalia::orderDeadline($this->semester);
+        if (!$deadline) return '';
+        if ($deadline->getTimestamp() > time()) return '';
+        $requester = new RegaliaRequester($this->semester, $this->for);
+        foreach ($requester->requests() as $request) {
+            if (!$request->order()) continue;
+            if ($request->order()->type() != 'extra') return '';
         }
-        return 'NO NOTIFICATIONS';
+        // display notification
+        return sprintf(
+            "<div class='notification notification--warning'>" .
+                "The %s deadline for ordering personalized regalia was %s. " .
+                "This order will be placed on a waitlist to be filled with an extra set of UNM PhD regalia in the closest available size." .
+                "</div>",
+            $this->semester,
+            Format::date($deadline)
+        );
     }
 
     protected function currentChildObject(): Tag
