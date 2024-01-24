@@ -5,17 +5,12 @@ fields:
   site:
     name: Regalia plugin dev
 
-# This site should allow general sign-in, and display a prominent sign-in button
+# shared db settings
 unm:
   block_unknown_netids: false
-  # share a local shared DB for ous module
   user_source: https://secretary.unm.edu/shared_permissions/known_netids.yaml
   shared_db:
-    dsn: "sqlite:${paths.storage}/shared.sqlite"
-
-# show sign in
-usermenu:
-  guest_signin: true
+    dsn: "sqlite:${paths.base}/../../global/shared.sqlite"
 
 # disable email
 email:
@@ -25,21 +20,24 @@ email:
 errors:
   display_trace: true
 
-# use UNM theme without caching head
-theme:
-  active_themes: [unm, unm_dev]
-  head_cache_ttl: 600
-
 # much shorter caching settings
 cache:
-  path: false # use system temp dir so it's not a slow bind mount in dev containers
+  path: "${paths.base}/cache"
   ttl: 60
   template_ttl: 60
   content_ttl: 0
 
 # don't cache files as long
 files:
-  ttl: 600
+  ttl: 60
+
+# shorter head cache time
+theme:
+  head_cache_ttl: 60
+
+# show sign in
+usermenu:
+  guest_signin: true
 
 # enable mock CAS for NetID signin
 user_sources:
@@ -48,12 +46,7 @@ user_sources:
       netid:
         mock_cas_user: true
 
-# use poor man's cron
-cron:
-  route_enabled: true
-  poor_mans_cron: true
-
-# really permissive umasks for filestore, so syncing works properly
+# really permissive umasks for ease of development
 fs:
   umask_file: 0
   umask_dir: 0

@@ -1,5 +1,4 @@
 /storage/*
 /cache/*
 /files/*
-!/files/.htaccess
 /cron_error.log

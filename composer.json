@@ -22,5 +22,13 @@
     "psr-4": {
       "DigraphCMS_Plugins\\unmous\\regalia\\": "src/"
     }
+  },
+  "scripts": {
+    "migrate": [
+      "phinx migrate"
+    ],
+    "seed": [
+      "phinx seed:run"
+    ]
   }
 }
