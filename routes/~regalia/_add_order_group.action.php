@@ -35,7 +35,7 @@ $tams = (new CheckboxField('Tams instead of caps'))
 
 if ($form->ready()) {
     $group = RegaliaGroup::create(
-        $name->value() ? $name->value() : $semester->value() . ' ' . $type->value(),
+        $name->value() ? $name->value() : $semester->value() . ' ' . $type->value() . ' orders',
         $type->value(),
         $semester->value(),
         $tams->value()
