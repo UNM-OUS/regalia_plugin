@@ -47,7 +47,7 @@ class RegaliaInfoRequests
                 'service',
                 'Regalia info collected for ' . $name,
                 $email,
-                $item->createdBy(),
+                $item->createdByUUID(),
                 null,
                 Templates::render('/regalia/request_notification.php', ['name' => $name])
             )
