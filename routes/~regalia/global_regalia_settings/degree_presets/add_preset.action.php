@@ -49,7 +49,7 @@ if ($form->ready()) {
                 'weight' => $weight->value(),
                 'level' => $level->value(),
                 'field' => $field->value(),
-                'deprecated' => false,
+                'deprecated' => 0,
             ]
         )->execute();
     throw new RedirectException(new URL('./'));
