@@ -52,14 +52,50 @@ $assignments = [];
 /** @var array<int,int> */
 $assigned_orders = [];
 
+// array to store requests that didn't order a robe. these need to be fulfilled, but last.
+/** @var RegaliaRequester[] $no_robe */
+$no_robe = [];
+
 // loop through requesters and make assignments
+/** @var RegaliaRequester $requester */
 foreach ($requesters as $requester) {
-    // find the best remaining extra for this requester
-    $extras = $group->extras()->where('identifier IS NULL')->order(null);
-    if ($assigned_orders) $extras->where('regalia_order.id NOT', $assigned_orders);
     $person = Regalia::getFullPersonInfo($requester->identifier());
+    // if requester doesn't need a robe, put off assigning them an extra
+    if ($person['needs_robe'] != 1) {
+        $no_robe[] = $requester;
+        continue;
+    }
+    // get all unassigned extras
+    $extras = $group->extras()->where('identifier IS NULL')->order(null);
+    // filter out the ones that we've tentatively assigned here
+    if ($assigned_orders) $extras->where('regalia_order.id NOT', $assigned_orders);
+    // break if the number of unassigned extras is the same as the number of no_robe extras, so those can be assigned last
+    if ($extras->count() == count($no_robe)) {
+        break;
+    }
+    // order by how well they fit this person
     $height = intval($person['size_height']);
     $extras->order("CASE WHEN regalia_order.size_height <= $height THEN $height - regalia_order.size_height ELSE 100 + regalia_order.size_height - $height END");
+    // try each one until we get one that works well for this person
+    while ($extra = $extras->fetch()) {
+        if ($person['needs_hat'] == 1 && !$extra->hat()) continue;
+        if ($person['needs_robe'] == 1 && !$extra->robe()) continue;
+        if ($person['needs_hood'] == 1 && !$extra->hood()) continue;
+        $assigned_orders[$requester->identifier()] = $extra->id();
+        $assignments[$requester->identifier()] = $extra;
+        break;
+    }
+}
+
+// assign no_robe orders last, because their size doesn't matter
+/** @var RegaliaRequester $requester */
+foreach ($no_robe as $requester) {
+    $person = Regalia::getFullPersonInfo($requester->identifier());
+    // get all unassigned extras
+    $extras = $group->extras()->where('identifier IS NULL')->order(null);
+    // filter out the ones that we've tentatively assigned here
+    if ($assigned_orders) $extras->where('regalia_order.id NOT', $assigned_orders);
+    // try each one until we get one that works well for this person
     while ($extra = $extras->fetch()) {
         if ($person['needs_hat'] == 1 && !$extra->hat()) continue;
         if ($person['needs_robe'] == 1 && !$extra->robe()) continue;

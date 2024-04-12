@@ -10,7 +10,7 @@ unm:
   block_unknown_netids: false
   user_source: https://secretary.unm.edu/shared_permissions/known_netids.yaml
   shared_db:
-    dsn: "sqlite:${paths.base}/../../global/shared.sqlite"
+    dsn: "sqlite:${paths.base}/../../shared.sqlite"
 
 # disable email
 email:
