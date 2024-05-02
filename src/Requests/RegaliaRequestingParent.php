@@ -12,6 +12,7 @@ interface RegaliaRequestingParent
     public function regaliaPreferredGroup(): ?string;
     public function requestRegaliaCancellation();
     public function requestRegaliaUncancellation();
+    public function regaliaRequestPriority(): int;
     public function url(): URL;
     public function name(): string;
 }

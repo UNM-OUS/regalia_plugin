@@ -1,6 +1,7 @@
 <?php
 
 use DigraphCMS\Context;
+use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
 use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\Breadcrumb;
@@ -38,11 +39,37 @@ if ($group->type() == 'normal') {
     $requesters->like('preferred_group', $group->type());
 }
 
-// order to accommodate first/last if specified
-
-// order oldest requests first
-$requesters
-    ->order('regalia_request.id ASC');
+// sort requesters
+/** @var RegaliaRequester[] */
+$requesters = $requesters->fetchAll();
+usort($requesters,function(RegaliaRequester $a, RegaliaRequester $b){
+    // next sort by "priority" of requests, higher total priority first
+    $a_priority = 0;
+    $b_priority = 0;
+    foreach ($a->requests() as $request) {
+        if ($a->priority()) $a_priority += $a->priority();
+    }
+    foreach ($b->requests() as $request) {
+        if ($b->priority()) $b_priority += $b->priority();
+    }
+    if ($a_priority != $b_priority) {
+        return $b_priority - $a_priority;
+    }
+    // sort by age otherwise, first-come first-serve, so lowest ID first
+    $a_id = INF;
+    $b_id = INF;
+    foreach ($a->requests() as $request) {
+        $a_id = min($a_id,$request->id());
+    }
+    foreach ($b->requests() as $request) {
+        $b_id = min($b_id,$request->id());
+    }
+    if ($a_id != $b_id) {
+        return $a_id - $b_id;
+    }
+    // return zero if all else fails
+    return 0;
+});
 
 // set up array to hold pairings between person identifiers and extras
 /** @var array<string,RegaliaOrder> */

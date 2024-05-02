@@ -111,6 +111,16 @@ class RegaliaRequester
             ->fetchAll();
     }
 
+    public function priority(): int
+    {
+        $priority = 0;
+        foreach ($this->requests() as $request) {
+            if ($request->cancelled()) continue;
+            $priority += $request->parent()->regaliaRequestPriority();
+        }
+        return $priority;
+    }
+
     public function identifier(): string
     {
         return $this->identifier;
