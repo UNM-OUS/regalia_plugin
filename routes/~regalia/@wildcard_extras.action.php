@@ -1,14 +1,11 @@
 <?php
 
 use DigraphCMS\Context;
-use DigraphCMS\Events\Dispatcher;
 use DigraphCMS\HTTP\HttpError;
-use DigraphCMS\HTTP\RedirectException;
 use DigraphCMS\UI\Breadcrumb;
-use DigraphCMS\UI\ButtonMenus\SingleButton;
+use DigraphCMS\UI\CallbackLink;
 use DigraphCMS\UI\Notifications;
 use DigraphCMS\UI\Pagination\PaginatedTable;
-use DigraphCMS\URL\URL;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\PersonInfo;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
 use DigraphCMS_Plugins\unmous\regalia\Regalia;
@@ -42,7 +39,7 @@ if ($group->type() == 'normal') {
 // sort requesters
 /** @var RegaliaRequester[] */
 $requesters = $requesters->fetchAll();
-usort($requesters,function(RegaliaRequester $a, RegaliaRequester $b){
+usort($requesters, function (RegaliaRequester $a, RegaliaRequester $b) {
     // next sort by "priority" of requests, higher total priority first
     $a_priority = $a->priority();
     $b_priority = $b->priority();
@@ -53,10 +50,10 @@ usort($requesters,function(RegaliaRequester $a, RegaliaRequester $b){
     $a_id = INF;
     $b_id = INF;
     foreach ($a->requests() as $request) {
-        $a_id = min($a_id,$request->id());
+        $a_id = min($a_id, $request->id());
     }
     foreach ($b->requests() as $request) {
-        $b_id = min($b_id,$request->id());
+        $b_id = min($b_id, $request->id());
     }
     if ($a_id != $b_id) {
         return $a_id - $b_id;
@@ -167,7 +164,8 @@ foreach ($assignments as $identifier => $extra) {
             $requests,
             function (RegaliaRequest $request): array {
                 return [
-                    sprintf('<a href="%s">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType())
+                    sprintf('<a href="%s">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
+                    $request->parent()->regaliaRequestPriority()
                 ];
             }
         )
@@ -178,14 +176,12 @@ foreach ($assignments as $identifier => $extra) {
 echo '</table>';
 
 if (!$assignments) return;
-echo new SingleButton(
-    'Save these extra assignments',
-    function () use ($assignments, $group) {
-        foreach ($assignments as $identifier => $extra) {
-            $requester = new RegaliaRequester($group->semester(), $identifier);
-            $requester->assignExtra($extra);
-        }
-        Notifications::flashConfirmation('Extra assignments saved');
-        throw new RedirectException(new URL('extras:' . Context::url()->actionSuffix()));
+echo (new CallbackLink(function () use ($assignments, $group) {
+    foreach ($assignments as $identifier => $extra) {
+        $requester = new RegaliaRequester($group->semester(), $identifier);
+        $requester->assignExtra($extra);
     }
-);
+    Notifications::flashConfirmation('Extra assignments saved');
+}))
+    ->addClass('button')
+    ->addChild('Save these extra assignments');
