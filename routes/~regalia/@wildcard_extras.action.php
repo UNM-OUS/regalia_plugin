@@ -136,7 +136,9 @@ foreach ($assignments as $identifier => $extra) {
     $person_height = $person['size_height'];
     $extra_height = $extra ? $extra->height() : 0;
     $match = 'good';
-    if ($person_height >= $extra_height) {
+    if (!$person_height) {
+        $match = 'good';
+    } elseif ($person_height >= $extra_height) {
         $difference = $person_height - $extra_height;
         if ($difference > 6) $match = 'poor';
         elseif ($difference > 3) $match = 'fair';
