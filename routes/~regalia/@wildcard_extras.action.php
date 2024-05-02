@@ -44,14 +44,8 @@ if ($group->type() == 'normal') {
 $requesters = $requesters->fetchAll();
 usort($requesters,function(RegaliaRequester $a, RegaliaRequester $b){
     // next sort by "priority" of requests, higher total priority first
-    $a_priority = 0;
-    $b_priority = 0;
-    foreach ($a->requests() as $request) {
-        if ($a->priority()) $a_priority += $a->priority();
-    }
-    foreach ($b->requests() as $request) {
-        if ($b->priority()) $b_priority += $b->priority();
-    }
+    $a_priority = $a->priority();
+    $b_priority = $b->priority();
     if ($a_priority != $b_priority) {
         return $b_priority - $a_priority;
     }
