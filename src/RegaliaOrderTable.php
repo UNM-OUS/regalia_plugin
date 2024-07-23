@@ -98,6 +98,7 @@ class RegaliaOrderTable extends PaginatedTable
             $order->colorBand(),
             $order->colorLining(),
             $order->colorChevron(),
+            // TODO: split order parts into their own columns
             implode("; ", $order->order_jostens())
         ];
     }
