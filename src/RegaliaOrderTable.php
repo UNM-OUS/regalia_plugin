@@ -98,7 +98,7 @@ class RegaliaOrderTable extends PaginatedTable
             $order->colorBand(),
             $order->colorLining(),
             $order->colorChevron(),
-            new LongTextCell(implode(";\r", $order->order_jostens()))
+            implode("; ", $order->order_jostens())
         ];
     }
 }
