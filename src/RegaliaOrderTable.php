@@ -84,7 +84,6 @@ class RegaliaOrderTable extends PaginatedTable
             'Band Color',
             'Lining Color 1',
             'Chevron Color 1',
-            'Order',
         ];
         $headers = array_merge($headers, self::JOSTENS_PARTS);
         return $headers;
