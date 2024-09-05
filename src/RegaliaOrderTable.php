@@ -3,13 +3,21 @@
 namespace DigraphCMS_Plugins\unmous\regalia;
 
 use DigraphCMS\Spreadsheets\CellWriters\LinkCell;
-use DigraphCMS\Spreadsheets\CellWriters\LongTextCell;
 use DigraphCMS\UI\Pagination\ColumnSortingHeader;
 use DigraphCMS\UI\Pagination\ColumnStringFilteringHeader;
 use DigraphCMS\UI\Pagination\PaginatedTable;
 
 class RegaliaOrderTable extends PaginatedTable
 {
+    const JOSTENS_PARTS = [
+        'HOOD',
+        'PACKAGE T/G',
+        'PACKAGE C/G',
+        'TAM',
+        'CAP',
+        'GOWN',
+    ];
+
     public function __construct(RegaliaOrderSelect $select, string $download = null)
     {
         parent::__construct($select, [$this, 'regaliaCallback'], $this->regaliaHeaders());
@@ -60,7 +68,7 @@ class RegaliaOrderTable extends PaginatedTable
 
     public function regaliaDownloadHeaders(): array
     {
-        return [
+        $headers = [
             'Order',
             'Last Name',
             'First Name',
@@ -78,11 +86,13 @@ class RegaliaOrderTable extends PaginatedTable
             'Chevron Color 1',
             'Order',
         ];
+        $headers = array_merge($headers, self::JOSTENS_PARTS);
+        return $headers;
     }
 
     public function regaliaDownloadCallback(RegaliaOrder $order): array
     {
-        return [
+        $row = [
             new LinkCell($order->orderName(), $order->url()),
             $order->lastName(),
             $order->firstName(),
@@ -98,8 +108,11 @@ class RegaliaOrderTable extends PaginatedTable
             $order->colorBand(),
             $order->colorLining(),
             $order->colorChevron(),
-            // TODO: split order parts into their own columns
-            implode("; ", $order->order_jostens())
         ];
+        $jostens_parts = $order->order_jostens();
+        foreach (self::JOSTENS_PARTS as $part) {
+            $row[] = in_array($part, $jostens_parts) ? $part : '';
+        }
+        return $row;
     }
 }
