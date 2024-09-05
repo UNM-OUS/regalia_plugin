@@ -20,16 +20,16 @@ $sizes = [
         [$group, true, true, true, 60, 120, 'M'] // arguments for RegaliaOrder::createExtra()
     ],
     [
-        'Extra-Small: 5\' 3"',
-        [$group, true, true, true, 63, 130, 'M'] // arguments for RegaliaOrder::createExtra()
+        'Extra-Small: 5\' 4"',
+        [$group, true, true, true, 64, 130, 'M'] // arguments for RegaliaOrder::createExtra()
     ],
     [
         'Small: 5\' 6"',
         [$group, true, true, true, 66, 149, 'L'] // arguments for RegaliaOrder::createExtra()
     ],
     [
-        'Medium: 5\' 9"',
-        [$group, true, true, true, 69, 180, 'L'] // arguments for RegaliaOrder::createExtra()
+        'Medium: 5\' 10"',
+        [$group, true, true, true, 70, 180, 'L'] // arguments for RegaliaOrder::createExtra()
     ],
     [
         'Large: 6\' 0"',
