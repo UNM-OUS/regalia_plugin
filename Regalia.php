@@ -66,7 +66,7 @@ class Regalia extends AbstractPlugin
         else return Permissions::inMetaGroup('regalia__view');
     }
 
-    public static function orderDeadline(Semester $semester = null): ?DateTime
+    public static function orderDeadline(Semester|null $semester = null): ?DateTime
     {
         $semester = $semester ?? Semesters::current();
         if ($time = intval(Datastore::value('regalia', 'order-deadline', strval($semester->intVal())))) {
@@ -74,7 +74,7 @@ class Regalia extends AbstractPlugin
         } else return null;
     }
 
-    public static function cancellationDeadline(Semester $semester = null): ?DateTime
+    public static function cancellationDeadline(Semester|null $semester = null): ?DateTime
     {
         $semester = $semester ?? Semesters::current();
         if ($time = intval(Datastore::value('regalia', 'cancellation-deadline', strval($semester->intVal())))) {

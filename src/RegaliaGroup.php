@@ -5,6 +5,7 @@ namespace DigraphCMS_Plugins\unmous\regalia;
 use DigraphCMS\DB\DB;
 use DigraphCMS\URL\URL;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Semester;
+use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
 
 class RegaliaGroup
 {
@@ -176,6 +177,9 @@ class RegaliaGroup
         return $this->name;
     }
 
+    /**
+     * @return "normal"|"extra"|"platform"
+     */
     public function type(): string
     {
         return $this->type;
@@ -183,7 +187,7 @@ class RegaliaGroup
 
     public function semester(): Semester
     {
-        return Semester::fromCode($this->semester);
+        return Semesters::fromCode($this->semester);
     }
 
     public function ordersLocked(): bool

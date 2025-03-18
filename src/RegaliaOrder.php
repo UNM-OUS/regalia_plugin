@@ -481,7 +481,18 @@ class RegaliaOrder
 
     public function tam(): bool
     {
-        return $this->tam ?? ($this->group_tams == 1);
+        // doctoral degrees can get a tam in any circumstance
+        if ($this->degreeLevel() == "DOCTOR") {
+            return $this->tam ?? ($this->group_tams == 1);
+        }
+        // everyone else can only get a tam if they're in a platform group
+        elseif ($this->group_type == 'platform') {
+            return $this->tam ?? ($this->group_tams == 1);
+        }
+        // everyone else gets a mortarboard
+        else {
+            return false;
+        }
     }
 
     public function tamPreference(): ?bool
