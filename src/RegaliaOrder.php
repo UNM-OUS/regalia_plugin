@@ -73,8 +73,6 @@ class RegaliaOrder
      */
     public function delete(): bool
     {
-        // skip if group is locked
-        if ($this->group()->ordersLocked() || $this->group()->cancellationLocked()) return false;
         // runs in a transaction
         DB::beginTransaction();
         // dispatch events to clean up anything external
