@@ -85,6 +85,11 @@ class RegaliaOrder
             )
             ->where('assigned_order', $this->id())
             ->execute();
+        // delete any associated billing
+        DB::query()
+            ->delete('regalia_billing')
+            ->where('order_id', $this->id())
+            ->execute();
         // do delete -- only actually deletes if group isn't locked
         // this is to preserve useful historical regalia order data
         $out = !!DB::query()
