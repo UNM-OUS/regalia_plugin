@@ -220,11 +220,15 @@ if ($order->group()->ordersLocked()) {
 echo "</div>";
 
 if (!Permissions::inMetaGroup('regalia__admin')) return;
-if ($order->group()->ordersLocked() || $order->group()->cancellationLocked()) return;
 
 echo '<div class="card navigation-frame navigation-frame--stateless" id="order-deletion-interface" data-target="_top">';
 echo "<h2>Delete</h2>";
 echo "<p>Delete this order, as if it had never existed. This action cannot be undone.</p>";
+echo "<p>If this order was assigned to any requests, those requests will be unassigned, but otherwise left intact.</p>";
+
+if ($order->group()->ordersLocked() || $order->group()->cancellationLocked()) {
+    Notifications::printWarning('If this order has already been sent to the bookstore/Jostens, use this tool with <strong>extreme</strong> caution. this should generally only be done if the order was lost in transit after ordering.');
+}
 
 if (Context::arg('delete') != 1) {
     printf("<a href='%s' class='button button--warning' data-target='_frame'>Delete order</a>", new URL('?delete=1'));

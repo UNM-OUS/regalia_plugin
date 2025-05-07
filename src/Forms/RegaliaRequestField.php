@@ -15,7 +15,7 @@ class RegaliaRequestField extends FIELDSET
 {
     protected $for, $infoForm, $needsRegalia;
 
-    public function __construct(string $label, string $for, Semester $semester = null)
+    public function __construct(string $label, string $for, Semester|null $semester = null)
     {
         parent::__construct($label);
         $this->for = $for;
