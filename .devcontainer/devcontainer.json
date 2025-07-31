@@ -14,15 +14,15 @@
 	// post-install commands
 	"postCreateCommand": {
 		"composer": "composer install && composer run migrate",
-		"cronSetup": "crontab -l | { cat; echo \"*/10 * * * * /usr/bin/php /workspace/${localWorkspaceFolderBasename}/demo/scripts/cron-run.php\"; } | crontab -"
+		"cronSetup": "crontab -l | { cat; echo \"*/10 * * * * /usr/bin/php /workspace/${localWorkspaceFolderBasename}/scripts/cron-run.php\"; } | crontab -"
 	},
 	"postStartCommand": "cron",
 	// volumes
 	"mounts": [
 		"source=${localWorkspaceFolderBasename}-vendor,target=${containerWorkspaceFolder}/vendor,type=volume",
-		"source=${localWorkspaceFolderBasename}-cache,target=${containerWorkspaceFolder}/demo/cache,type=volume",
-		"source=${localWorkspaceFolderBasename}-files,target=${containerWorkspaceFolder}/demo/files,type=volume",
-		"source=${localWorkspaceFolderBasename}-storage,target=${containerWorkspaceFolder}/demo/storage,type=volume",
+		"source=${localWorkspaceFolderBasename}-cache,target=${containerWorkspaceFolder}/cache,type=volume",
+		"source=${localWorkspaceFolderBasename}-files,target=${containerWorkspaceFolder}/web/files,type=volume",
+		"source=${localWorkspaceFolder}/storage,target=${containerWorkspaceFolder}/storage,type=bind",
 		"source=${localWorkspaceFolder}/../global,target=/workspace/global,type=bind"
 	],
 	// specify extensions that we want
@@ -30,16 +30,18 @@
 		"vscode": {
 			"extensions": [
 				"xdebug.php-debug",
-				"neilbrayfield.php-docblocker",
+				"recca0120.vscode-phpunit",
 				"bmewburn.vscode-intelephense-client",
-				"stkb.rewrap",
 				"rifi2k.format-html-in-php",
+				"michelemelluso.code-beautifier",
+				"yzhang.markdown-all-in-one",
 				"ecmel.vscode-html-css",
 				"swordev.phpstan",
-				"gencer.html-slim-scss-css-class-completion",
-				"mrmlnc.vscode-scss",
+				"redhat.vscode-yaml",
+				"redhat.vscode-xml",
 				"Gruntfuggly.todo-tree",
-				"redhat.vscode-yaml"
+				"mrmlnc.vscode-scss",
+				"gencer.html-slim-scss-css-class-completion"
 			]
 		}
 	}

@@ -18,4 +18,4 @@ RUN sed -i 's,^post_max_size =.*$,post_max_size = 300M,' /etc/php/8.1/cli/php.in
 RUN sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 300M,' /etc/php/8.1/cli/php.ini
 
 # copy global config
-COPY global/global.yaml /workspace/
+COPY global.yaml /workspace/
