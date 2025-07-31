@@ -41,22 +41,20 @@ if ($form->ready()) {
         Notifications::printWarning('No current UNM position found');
     }
     echo '<h3>Regalia needs</h3>';
-    $regalia_needs = $person_info['regalia'];
-    if (is_null($regalia_needs)) {
-        Notifications::printWarning('Regalia needs are unknown');
-    } else {
-        Notifications::printConfirmation(sprintf('This person <strong>%s</strong> own their own regalia', $regalia_needs ? 'does not' : 'does'));
-    }
     $info = Regalia::getPersonInfo($identifier->value());
     $editUrl = new URL('person_info/person:' . $identifier->value());
     $requestUrl = new URL('../request_info/');
-    if (!$info) {
+    $regalia_needs = $person_info['regalia'];
+    if (is_null($regalia_needs)) {
         Notifications::printWarning(sprintf(
-            'No regalia order info found<br><a href="%s">Request it?</a><br><a href="%s">Add it yourself now</a>',
+            'This person\'s regalia needs are unknown.<br><a href="%s">Request info</a><br><a href="%s">Add it yourself now</a>',
             $requestUrl,
             $editUrl
         ));
     } else {
+        Notifications::printConfirmation(sprintf('This person <strong>%s</strong> own their own regalia', $regalia_needs ? 'does not' : 'does'));
+    }
+    if ($info) {
         $preset = Regalia::preset($info['preset_id']);
         $field = Regalia::field($info['field_id']);
         $institution = $info['institution_id'] ? Regalia::institution($info['institution_id']) : null;
