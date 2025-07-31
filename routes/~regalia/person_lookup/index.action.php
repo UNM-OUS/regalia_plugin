@@ -65,10 +65,10 @@ if ($form->ready()) {
                 $editUrl
             ));
         }
-        $display = [sprintf('Regalia order info found for %s', $name)];
+        $display = [];
         $display [] = sprintf(
             '<div><strong>Needed regalia pieces:</strong> %s</div>',
-            implode(', ', array_filter([
+            implode('', array_filter([
                 $info['needs_hat'] ? 'hat' : false,
                 $info['needs_robe'] ? 'robe' : false,
                 $info['needs_hood'] ? 'hood' : false,
