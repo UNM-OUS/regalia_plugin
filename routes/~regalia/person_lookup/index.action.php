@@ -44,6 +44,7 @@ if ($form->ready()) {
     $info = Regalia::getPersonInfo($identifier->value());
     $editUrl = new URL('person_info/person:' . $identifier->value());
     $requestUrl = new URL('../request_info/');
+    $requestUrl->arg('default', $identifier->value());
     $regalia_needs = $person_info['regalia'];
     if (is_null($regalia_needs)) {
         Notifications::printWarning(sprintf(
@@ -68,7 +69,7 @@ if ($form->ready()) {
         $display = [];
         $display [] = sprintf(
             '<div><strong>Needed regalia pieces:</strong> %s</div>',
-            implode('', array_filter([
+            implode(', ', array_filter([
                 $info['needs_hat'] ? 'hat' : false,
                 $info['needs_robe'] ? 'robe' : false,
                 $info['needs_hood'] ? 'hood' : false,
@@ -96,7 +97,7 @@ if ($form->ready()) {
             '<div><strong>Hat size: </strong> %s</div>',
             $info['size_hat']
         );
-        Notifications::printConfirmation(implode('<br>', array_filter($display)));
+        Notifications::printConfirmation(implode('', array_filter($display)));
     }
     echo '<h3>Past orders</h3>';
     $orders = \DigraphCMS_Plugins\unmous\regalia\RegaliaOrders::select()

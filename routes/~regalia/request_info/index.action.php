@@ -1,11 +1,13 @@
 <h1>Request someone's regalia info</h1>
 <p>
     You can use this tool to request a person's regalia information before creating an RSVP for them.
-    The recipient will get an email asking them to fill out their regalia information, with a link to a form where they'll only have to fill out the necessary sizing information based on what they need.
+    The recipient will get an email asking them to fill out their regalia information, with a link to a form where
+    they'll only have to fill out the necessary sizing information based on what they need.
     These requests expire after a week, and you will get an email when the recipient fills out their information.
 </p>
 <?php
 
+use DigraphCMS\Context;
 use DigraphCMS\HTML\Forms\Email;
 use DigraphCMS\HTML\Forms\Field;
 use DigraphCMS\HTML\Forms\Fields\CheckboxField;
@@ -23,6 +25,7 @@ $form->button()->setText('Send regalia info request');
 
 $identifier = (new Field('NetID or email', new EmailOrNetIDInput()))
     ->addTip('This field should identify the person this regalia is <strong>actually for</strong>, and not an assistant or someone who will be filling this out on their behalf')
+    ->setDefault(Context::arg('default'))
     ->setRequired(true)
     ->addForm($form);
 
