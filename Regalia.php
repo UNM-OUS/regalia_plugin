@@ -3,6 +3,8 @@
 namespace DigraphCMS_Plugins\unmous\regalia;
 
 use DateTime;
+use DigraphCMS\Cron\ScheduledJobs;
+use DigraphCMS\Cron\WeeklySchedule;
 use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Plugins\AbstractPlugin;
 use DigraphCMS\UI\Format;
@@ -12,9 +14,9 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Semester;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
-use Envms\FluentPDO\Queries\Select;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\SharedDB;
 use DigraphCMS_Plugins\unmous\regalia\Requests\RegaliaRequests;
+use Envms\FluentPDO\Queries\Select;
 use Envms\FluentPDO\Query;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
@@ -80,6 +82,28 @@ class Regalia extends AbstractPlugin
         if ($time = intval(Datastore::value('regalia', 'cancellation-deadline', strval($semester->intVal())))) {
             return (new DateTime)->setTimestamp($time);
         } else return null;
+    }
+
+    public static function cronJob_maintenance()
+    {
+        // daily scheduled checks for regalia groups that need their orders or cancellation locked
+        ScheduledJobs::schedule(
+            function () {
+                $order_deadline = (int)Datastore::value('regalia', 'order-deadline', (string)Semesters::current()->intVal());
+                $cancellation_deadline = (int)Datastore::value('regalia', 'cancellation-deadline', (string)Semesters::current()->intVal());
+                $orders_locked = $order_deadline && $order_deadline < time();
+                $cancellation_locked = $cancellation_deadline && $cancellation_deadline < time();
+                if (!$orders_locked && !$cancellation_locked) return "Nothing needs locking";
+                foreach (RegaliaGroups::getBySemester(Semesters::current()) as $group) {
+                    if ($orders_locked && !$group->ordersLocked()) $group->setLockOrders(true)->save();
+                    if ($cancellation_locked && !$group->cancellationLocked()) $group->setLockCancellation(true)->save();
+                }
+                return "Locked regalia groups if needed";
+            },
+            new WeeklySchedule(8, [WeeklySchedule::MONDAY, WeeklySchedule::TUESDAY, WeeklySchedule::WEDNESDAY, WeeklySchedule::THURSDAY, WeeklySchedule::FRIDAY]),
+            'regalia_group_auto_lock',
+            'v1'
+        );
     }
 
     public static function cronJob_halfhourly()

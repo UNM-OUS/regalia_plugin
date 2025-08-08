@@ -2,8 +2,6 @@
 
 <?php
 
-use DigraphCMS\Cron\DeferredJob;
-use DigraphCMS\Datastore\Datastore;
 use DigraphCMS\Datastore\DatastoreNamespace;
 use DigraphCMS\HTML\Forms\Fields\DatetimeField;
 use DigraphCMS\HTML\Forms\FormWrapper;
@@ -16,7 +14,6 @@ use DigraphCMS\URL\URL;
 use DigraphCMS\Users\Permissions;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\ColumnSemesterFilteringHeader;
 use DigraphCMS_Plugins\unmous\ous_digraph_module\Forms\SemesterField;
-use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
 use DigraphCMS_Plugins\unmous\regalia\RegaliaGroup;
 use DigraphCMS_Plugins\unmous\regalia\RegaliaGroups;
 
@@ -91,40 +88,6 @@ if (Permissions::inMetaGroup('regalia__edit')) {
             // save settings
             $datastore->set('order-deadline', strval($semester->intVal()), $orderDeadline->value() ? $orderDeadline->value()->getTimestamp() : null);
             $datastore->set('cancellation-deadline', strval($semester->intVal()), $cancellationDeadline->value() ? $cancellationDeadline->value()->getTimestamp() : null);
-            // schedule task to disable orders
-            new DeferredJob(
-                function (): string {
-                    $deadline = (int)Datastore::value('regalia', 'order-deadline', strval(Semesters::current()->intVal()));
-                    if (!$deadline) return 'Regalia order deadline is not set';
-                    if ($deadline > time()) return 'Regalia order deadline has not actually passed';
-                    $groups = RegaliaGroups::getBySemester(Semesters::current());
-                    foreach ($groups as $group) {
-                        assert($group instanceof RegaliaGroup);
-                        if ($group->ordersLocked()) continue;
-                        $group->setLockOrders(true)->save();
-                    }
-                    return 'Auto-locked regalia orders';
-                },
-                'disable-regalia-orders',
-                $orderDeadline->value()->getTimestamp() + 3600
-            );
-            // schedule task to disable cancellation
-            new DeferredJob(
-                function (): string {
-                    $deadline = (int)Datastore::value('regalia', 'cancellation-deadline', strval(Semesters::current()->intVal()));
-                    if (!$deadline) return 'Regalia cancellation deadline is not set';
-                    if ($deadline > time()) return 'Regalia cancellation deadline has not actually passed';
-                    $groups = RegaliaGroups::getBySemester(Semesters::current());
-                    foreach ($groups as $group) {
-                        assert($group instanceof RegaliaGroup);
-                        if ($group->cancellationLocked()) continue;
-                        $group->setLockCancellation(true)->save();
-                    }
-                    return 'Auto-locked regalia cancellation';
-                },
-                'disable-regalia-cancellations',
-                $cancellationDeadline->value()->getTimestamp() + 3600 // run one hour after deadline
-            );
             // notify and bounce
             Notifications::flashConfirmation('Regalia deadlines saved');
             throw new RefreshException();
