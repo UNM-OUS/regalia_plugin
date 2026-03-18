@@ -13,14 +13,18 @@ use DigraphCMS_Plugins\unmous\regalia\RegaliaInfoRequests;
 
 $uuid = Context::url()->actionSuffix();
 
-if (!RegaliaInfoRequests::exists($uuid)) throw new HttpError(404);
-if (RegaliaInfoRequests::expired($uuid)) throw new HttpError(404, 'Request link has expired');
+if (!RegaliaInfoRequests::exists($uuid))
+    throw new HttpError(404);
+if (RegaliaInfoRequests::expired($uuid))
+    throw new HttpError(404, 'Request link has expired');
 Context::response()->template('minimal.php');
 $id = RegaliaInfoRequests::identifier($uuid);
 
 $name = PersonInfo::getFullNameFor($id);
-if ($name) $name = "$name (<kbd>$id</kbd>)";
-else $name = "<kbd>$id</kbd>";
+if ($name)
+    $name = "$name (<kbd>$id</kbd>)";
+else
+    $name = "<kbd>$id</kbd>";
 echo "<h1>Regalia information for:<br>$name</h1>";
 
 $form = new FormWrapper();
@@ -38,7 +42,7 @@ if ($form->ready()) {
     // send email to creator
     RegaliaInfoRequests::notifyCreator($uuid);
     // flash and bounce to home
-    Notifications::flashConfirmation("Thank you for entering your regalia needs, they have been saved and will be used for future regalia orders for <kbd>$id</kbd>");
+    Notifications::flashConfirmationHTML("Thank you for entering your regalia needs, they have been saved and will be used for future regalia orders for <kbd>$id</kbd>");
     throw new RedirectException(new URL('/'));
 }
 

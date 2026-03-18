@@ -13,7 +13,8 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class RegaliaRequestField extends FIELDSET
 {
-    protected $for, $infoForm, $needsRegalia;
+
+    protected                  $for,            $infoForm, $needsRegalia;
 
     public function __construct(string $label, string $for, Semester|null $semester = null)
     {
@@ -32,25 +33,31 @@ class RegaliaRequestField extends FIELDSET
             $netIds = OUS::userNetIDs();
             if (!in_array($for, $netIds)) {
                 if (PersonInfo::getFor($for, 'regalia') === false) {
-                    Notifications::notice(sprintf(
+                    Notifications::noticeHTML(sprintf(
                         "The person you are filling this form out for (<kbd>%s</kbd>) has previously opted out of regalia rental. " .
-                            "Unless you know otherwise, it is likely that they own their own regalia and do not need a rental.",
-                        $for
+                        "Unless you know otherwise, it is likely that they own their own regalia and do not need a rental.",
+                        $for,
                     ));
                 }
             }
         }
         // validator to require either opting out or an existing person record
         $this->needsRegalia->addValidator(function () {
-            if (!$this->needsRegalia->value()) return null;
-            elseif (!Regalia::getPersonInfo($this->for)) return "You must either opt out of regalia rental or enter the information necessary to pick the regalia that you need";
-            else return null;
+            if (!$this->needsRegalia->value())
+                return null;
+            elseif (Regalia::getPersonInfo($this->for))
+                return null;
+            else
+                return "You must either opt out of regalia rental or enter the information necessary to pick the regalia that you need";
         });
         // validator to require either opting out or an existing person record
         $this->needsRegalia->addValidator(function () {
-            if (!$this->needsRegalia->value()) return null;
-            elseif (!Regalia::validatePersonInfo($this->for, true)) return "You must update your regalia information to submit this form";
-            else return null;
+            if (!$this->needsRegalia->value())
+                return null;
+            elseif (!Regalia::validatePersonInfo($this->for))
+                return "You must update your regalia information to submit this form";
+            else
+                return null;
         });
     }
 
@@ -61,6 +68,7 @@ class RegaliaRequestField extends FIELDSET
 
     /**
      * @param string $tip
+     *
      * @return static
      */
     public function addTip(string $tip)
@@ -73,6 +81,7 @@ class RegaliaRequestField extends FIELDSET
      * Helper to add field to a form without breaking fluent chaining.
      *
      * @param FormWrapper $form
+     *
      * @return static
      */
     public function addForm(FormWrapper $form)
@@ -95,6 +104,7 @@ class RegaliaRequestField extends FIELDSET
      * Set default of whether regalia is requested
      *
      * @param boolean $default
+     *
      * @return static
      */
     public function setDefault(bool $default)
@@ -102,4 +112,5 @@ class RegaliaRequestField extends FIELDSET
         $this->needsRegalia->setDefault($default);
         return $this;
     }
+
 }

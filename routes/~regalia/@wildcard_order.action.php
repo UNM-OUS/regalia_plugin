@@ -26,7 +26,8 @@ use DigraphCMS_Plugins\unmous\regalia\Requests\RegaliaRequest;
 use DigraphCMS_Plugins\unmous\regalia\Requests\RegaliaRequests;
 
 $order = RegaliaOrders::get(intval(Context::url()->actionSuffix()));
-if (!$order) throw new HttpError(404);
+if (!$order)
+    throw new HttpError(404);
 
 Breadcrumb::parent($order->group()->url());
 
@@ -35,21 +36,23 @@ echo "<div id='order-interface-wrapper' class='navigation-frame navigation-frame
 echo "<h1>" . $order->semester() . ": " . $order->type() . " #" . $order->id() . "</h1>";
 echo new ArrayTable([
     'Person identifier' => $order->identifier(),
-    'Name' => $order->firstName() . ' ' . $order->lastName(),
-    'Email' => $order->email(),
-    'Hat' => $order->hat() ? ($order->tam() ? $order->hatSize() . ' Tam' : 'Cap') : 'None',
-    'Hood' => $order->hood() ? implode('<br>', [$order->degreeLevel(), $order->degreeField(), $order->institutionName()]) : 'None',
-    'Robe' => $order->robe() ? implode(', ', [$order->degreeLevel(), $order->heightHR(), $order->weight() . 'lbs']) : 'None',
+    'Name'              => $order->firstName() . ' ' . $order->lastName(),
+    'Email'             => $order->email(),
+    'Hat'               => $order->hat() ? ($order->tam() ? $order->hatSize() . ' Tam' : 'Cap') : 'None',
+    'Hood'              => $order->hood() ? implode('<br>', [$order->degreeLevel(), $order->degreeField(), $order->institutionName()]) : 'None',
+    'Robe'              => $order->robe() ? implode(', ', [$order->degreeLevel(), $order->heightHR(), $order->weight() . 'lbs']) : 'None',
 ]);
 
 // cancellation tools
 echo "<h2>Cancellation</h2>";
-if ($order->cancelled()) Notifications::printWarning('Order cancelled');
+if ($order->cancelled())
+    Notifications::printWarning('Order cancelled');
 if ($order->group()->cancellationLocked()) {
     Notifications::printNotice('Order group cancellations are locked');
-} else {
+}
+else {
     echo "<p>Cancelling or uncancelling here will also immediately update the regalia rental request field value for all associated RSVPs.</p>";
-    $requesters =  RegaliaRequests::select()
+    $requesters = RegaliaRequests::select()
         ->where('regalia_request.assigned_order', $order->id());
     if ($order->cancelled()) {
         echo (new CallbackLink(function () use ($order, $requesters) {
@@ -59,7 +62,8 @@ if ($order->group()->cancellationLocked()) {
             $order->setCancelled(false)->save();
         }, null, '_frame'))
             ->addChild('Un-cancel this order');
-    } else {
+    }
+    else {
         echo (new CallbackLink(function () use ($order, $requesters) {
             while ($request = $requesters->fetch()) {
                 $request->parent()->requestRegaliaCancellation();
@@ -75,14 +79,14 @@ $person = null;
 if ($order->identifier()) {
     $person = PersonInfo::fetch($order->identifier());
     echo "<h2>For person <kbd>" . $order->identifier() . "</kbd></h2>";
-    $requesters =  RegaliaRequests::select()
+    $requesters = RegaliaRequests::select()
         ->where('regalia_request.assigned_order', $order->id());
     echo "<h3>Assigned to requests</h3>";
     echo new PaginatedTable(
         $requesters,
         function (RegaliaRequest $request): array {
             return [
-                sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType())
+                sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
             ];
         }
     );
@@ -96,7 +100,7 @@ if ($order->identifier()) {
             $other,
             function (RegaliaRequest $request): array {
                 return [
-                    sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType())
+                    sprintf('<a href="%s" target="_blank">%s</a>', $request->parent()->url(), $request->parent()->regaliaOrderType()),
                 ];
             }
         );
@@ -106,7 +110,8 @@ if ($order->identifier()) {
 // editing tools
 if ($order->group()->ordersLocked()) {
     Notifications::printNotice('Order group is locked, and this order cannot be edited');
-} else {
+}
+else {
     $regaliaPerson = $order->identifier() ? Regalia::getPersonInfo($order->identifier()) : null;
 
     // form for editing size
@@ -114,9 +119,9 @@ if ($order->group()->ordersLocked()) {
     $form = new FormWrapper('size');
     $form->setData('target', '_frame');
     $parts = (new CheckboxListField('Regalia parts', [
-        'hat' => 'Cap/tam',
+        'hat'  => 'Cap/tam',
         'robe' => 'Robe',
-        'hood' => 'Hood'
+        'hood' => 'Hood',
     ]))
         ->setDefault(array_filter([
             $order->hat() ? 'hat' : false,
@@ -128,7 +133,7 @@ if ($order->group()->ordersLocked()) {
         ->setDefault([
             'height' => $order->height(),
             'weight' => $order->weight(),
-            'hat' => $order->hatSize()
+            'hat'    => $order->hatSize(),
         ]);
     $form->addChild($size);
     $form->addCallback(function () use ($parts, $size, $order) {
@@ -143,12 +148,12 @@ if ($order->group()->ordersLocked()) {
         if ($order->identifier()) {
             Regalia::query()
                 ->update('regalia_person', [
-                    'needs_hat' => in_array('hat', $parts->value()) ? 1 : 0,
-                    'needs_robe' => in_array('robe', $parts->value()) ? 1 : 0,
-                    'needs_hood' => in_array('hood', $parts->value()) ? 1 : 0,
+                    'needs_hat'   => in_array('hat', $parts->value()) ? 1 : 0,
+                    'needs_robe'  => in_array('robe', $parts->value()) ? 1 : 0,
+                    'needs_hood'  => in_array('hood', $parts->value()) ? 1 : 0,
                     'size_height' => $size->value()['height'],
                     'size_weight' => $size->value()['weight'],
-                    'size_hat' => $size->value()['hat']
+                    'size_hat'    => $size->value()['hat'],
                 ])
                 ->where('identifier', $order->identifier())
                 ->execute();
@@ -162,10 +167,11 @@ if ($order->group()->ordersLocked()) {
     $form = new FormWrapper('degree');
     $form->setData('target', '_frame');
     $degree = new RegaliaDegreeField('Degree');
-    if ($regaliaPerson) $degree->setDefault([
-        'preset_id' => $regaliaPerson['preset_id'],
-        'field_id' => $regaliaPerson['field_id']
-    ]);
+    if ($regaliaPerson)
+        $degree->setDefault([
+            'preset_id' => $regaliaPerson['preset_id'],
+            'field_id'  => $regaliaPerson['field_id'],
+        ]);
     $form->addChild($degree);
     $form->addCallback(function () use ($degree, $order) {
         $preset = Regalia::preset($degree->value()['preset_id']);
@@ -179,7 +185,7 @@ if ($order->group()->ordersLocked()) {
             Regalia::query()
                 ->update('regalia_person', [
                     'preset_id' => $degree->value()['preset_id'],
-                    'field_id' => $degree->value()['field_id']
+                    'field_id'  => $degree->value()['field_id'],
                 ])
                 ->where('identifier', $order->identifier())
                 ->execute();
@@ -193,7 +199,8 @@ if ($order->group()->ordersLocked()) {
     $form = new FormWrapper('inst');
     $form->setData('target', '_frame');
     $inst = new AutocompleteField('Institution', new InstitutionInput());
-    if ($regaliaPerson) $inst->setDefault($regaliaPerson['institution_id']);
+    if ($regaliaPerson)
+        $inst->setDefault($regaliaPerson['institution_id']);
     $form->addChild($inst);
     $form->addCallback(function () use ($inst, $order) {
         $institution = Regalia::institution($inst->value());
@@ -207,7 +214,7 @@ if ($order->group()->ordersLocked()) {
         if ($order->identifier()) {
             Regalia::query()
                 ->update('regalia_person', [
-                    'institution_id' => $inst->value()
+                    'institution_id' => $inst->value(),
                 ])
                 ->where('identifier', $order->identifier())
                 ->execute();
@@ -219,7 +226,8 @@ if ($order->group()->ordersLocked()) {
 
 echo "</div>";
 
-if (!Permissions::inMetaGroup('regalia__admin')) return;
+if (!Permissions::inMetaGroup('regalia__admin'))
+    return;
 
 echo '<div class="card navigation-frame navigation-frame--stateless" id="order-deletion-interface" data-target="_top">';
 echo "<h2>Delete</h2>";
@@ -227,12 +235,13 @@ echo "<p>Delete this order, as if it had never existed. This action cannot be un
 echo "<p>If this order was assigned to any requests, those requests will be unassigned, but otherwise left intact.</p>";
 
 if ($order->group()->ordersLocked() || $order->group()->cancellationLocked()) {
-    Notifications::printWarning('If this order has already been sent to the bookstore/Jostens, use this tool with <strong>extreme</strong> caution. this should generally only be done if the order was lost in transit after ordering.');
+    Notifications::printWarningHTML('If this order has already been sent to the bookstore/Jostens, use this tool with <strong>extreme</strong> caution. this should generally only be done if the order was lost in transit after ordering.');
 }
 
 if (Context::arg('delete') != 1) {
     printf("<a href='%s' class='button button--warning' data-target='_frame'>Delete order</a>", new URL('?delete=1'));
-} else {
+}
+else {
     $buttons = new ButtonMenu();
     $buttons->setTarget('_top');
     $buttons->addButton(new ButtonMenuButton('Yes, delete this order', function () use ($order) {

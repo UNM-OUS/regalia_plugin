@@ -23,20 +23,21 @@ if ($colors) {
             $e = preg_replace('/[^a-z0-9 \#\%\-]/i', '', $e);
             return "'" . $e . "'";
         },
-        $colors
+        $colors,
     ));
     $q = "($q)";
     $query->where('institution_color_lining1 IN ' . $q);
     $query->where('institution_color_chevron1 IN ' . $q);
-    Notifications::printNotice(sprintf(
+    Notifications::printNoticeHTML(sprintf(
         'Currently displaying limited colors<br><a href="%s">change color selections</a> or <a href="%s">clear filter</a>',
         new URL('_color_search.html?default=' . implode('|', $colors)),
-        new URL('./')
+        new URL('./'),
     ));
-} else {
-    Notifications::printNotice(sprintf(
+}
+else {
+    Notifications::printNoticeHTML(sprintf(
         '<a href="%s">Search for institutions that use particular colors</a>',
-        new URL('_color_search.html')
+        new URL('_color_search.html'),
     ));
 }
 
@@ -48,23 +49,23 @@ $table = new PaginatedTable(
         return [
             implode('', [
                 (!$row['deprecated']
-                    ? new ToolbarLink('Hide', 'hide', function () use ($id) {
-                        Regalia::query()
-                            ->update('regalia_institution', ['deprecated' => 1], $id)
-                            ->execute();
-                    })
-                    : new ToolbarLink('Show', 'show', function () use ($id) {
-                        Regalia::query()
-                            ->update('regalia_institution', ['deprecated' => 0], $id)
-                            ->execute();
-                    }))
+                ? new ToolbarLink('Hide', 'hide', function () use ($id) {
+                    Regalia::query()
+                        ->update('regalia_institution', ['deprecated' => 1], $id)
+                        ->execute();
+                })
+                : new ToolbarLink('Show', 'show', function () use ($id) {
+                    Regalia::query()
+                        ->update('regalia_institution', ['deprecated' => 0], $id)
+                        ->execute();
+                }))
                     ->setAttribute('data-target', '_frame'),
                 new ToolbarLink('Copy', 'copy', null, new URL('_add.html?jid=' . $row['jostens_id'])),
-                new ToolbarLink('Edit', 'edit', null, new URL('_edit.html?id=' . $row['id']))
+                new ToolbarLink('Edit', 'edit', null, new URL('_edit.html?id=' . $row['id'])),
             ]),
             $row['label']
-                . ($row['deprecated'] ? ' <strong>[HIDDEN]</strong>' : '')
-                . ($row['institution_deprecated'] ? ' <strong>[DEPRECATED]</strong>' : ''),
+            . ($row['deprecated'] ? ' <strong>[HIDDEN]</strong>' : '')
+            . ($row['institution_deprecated'] ? ' <strong>[DEPRECATED]</strong>' : ''),
             $row['color_lining'],
             $row['color_chevron'],
             $row['jostens_name'],
@@ -81,7 +82,7 @@ $table = new PaginatedTable(
         'Jostens Name',
         'Jostens City',
         'Jostens St',
-    ]
+    ],
 );
 
 $table->download(
@@ -89,8 +90,8 @@ $table->download(
     function ($row) {
         return [
             $row['label']
-                . ($row['deprecated'] ? ' <strong>[HIDDEN]</strong>' : '')
-                . ($row['institution_deprecated'] ? ' <strong>[DEPRECATED]</strong>' : ''),
+            . ($row['deprecated'] ? ' <strong>[HIDDEN]</strong>' : '')
+            . ($row['institution_deprecated'] ? ' <strong>[DEPRECATED]</strong>' : ''),
             $row['color_lining'],
             $row['color_chevron'],
             $row['jostens_name'],
@@ -105,7 +106,7 @@ $table->download(
         'Jostens Name',
         'Jostens City',
         'Jostens St',
-    ]
+    ],
 );
 
 echo $table;

@@ -15,15 +15,16 @@ $jInstitution = Regalia::query()
     ->where('id = ?', [Context::arg('jid')])
     ->fetch();
 
-if (!$jInstitution) throw new HttpError(400);
+if (!$jInstitution)
+    throw new HttpError(400);
 
-Notifications::printNotice(sprintf(
+Notifications::printNoticeHTML(sprintf(
     "This new institution will reference the Jostens hood book school:<br>%s<br>Lining: %s<br>Chevron: %s",
     implode(', ', array_filter([$jInstitution['institution_name'], $jInstitution['institution_city'], $jInstitution['institution_state']], function ($e) {
         return !!$e;
     })),
     $jInstitution['institution_color_lining1'],
-    $jInstitution['institution_color_chevron1']
+    $jInstitution['institution_color_chevron1'],
 ));
 
 $form = new FormWrapper();
@@ -37,10 +38,10 @@ $form->addCallback(function () use ($label) {
         ->insertInto(
             'regalia_institution',
             [
-                'label' => $label->value(),
+                'label'      => $label->value(),
                 'jostens_id' => Context::arg('jid'),
-                'deprecated' => 0
-            ]
+                'deprecated' => 0,
+            ],
         )->execute();
     throw new RedirectException(new URL('./'));
 });
