@@ -2,7 +2,7 @@
   "name": "unmous/regalia_plugin",
   "type": "digraph-plugin",
   "require": {
-    "digraphcms/digraph-core": "^2",
+    "digraphcms/digraph-core": "~2|~3",
     "unmous/core_plugin": "^2",
     "ext-fileinfo": "*"
   },
