@@ -18,11 +18,14 @@ use DigraphCMS_Plugins\unmous\regalia\Requests\RegaliaRequester;
 
 class RegaliaInformationForm extends DIV
 {
+
     protected $for;
+
     protected $semester;
+
     protected $form;
 
-    public function __construct(string $for, Semester $semester = null)
+    public function __construct(string $for, Semester|null $semester = null)
     {
         $this->for = $for;
         $this->semester = $semester;
@@ -37,23 +40,28 @@ class RegaliaInformationForm extends DIV
 
     protected function notifications(): string
     {
-        if (!$this->semester) return '';
+        if (!$this->semester)
+            return '';
         $deadline = Regalia::orderDeadline($this->semester);
-        if (!$deadline) return '';
-        if ($deadline->getTimestamp() > time()) return '';
+        if (!$deadline)
+            return '';
+        if ($deadline->getTimestamp() > time())
+            return '';
         $requester = new RegaliaRequester($this->semester, $this->for);
         foreach ($requester->requests() as $request) {
-            if (!$request->order()) continue;
-            if ($request->order()->type() != 'extra') return '';
+            if (!$request->order())
+                continue;
+            if ($request->order()->type() != 'extra')
+                return '';
         }
         // display notification
         return sprintf(
             "<div class='notification notification--warning'><p>" .
-                "The %s deadline for ordering personalized regalia was %s.<br>" .
-                "This order will be placed on a waitlist to be filled with extra UNM PhD regalia in the closest available size." .
-                "</p></div>",
+            "The %s deadline for ordering personalized regalia was %s.<br>" .
+            "This order will be placed on a waitlist to be filled with extra UNM PhD regalia in the closest available size." .
+            "</p></div>",
             $this->semester,
-            Format::datetime($deadline)
+            Format::datetime($deadline),
         );
     }
 
@@ -61,7 +69,8 @@ class RegaliaInformationForm extends DIV
     {
         if (Context::arg($this->id()) == 'edit') {
             return $this->buildForm();
-        } else {
+        }
+        else {
             return $this->buildDisplay();
         }
     }
@@ -81,38 +90,44 @@ class RegaliaInformationForm extends DIV
                     $info['needs_hat'] ? 'hat' : false,
                     $info['needs_robe'] ? 'robe' : false,
                     $info['needs_hood'] ? 'hood' : false,
-                ]))
+                ])),
             ));
-            if (($info['needs_robe'] || $info['needs_hood']) && $preset) $div->addChild(sprintf(
-                '<div><strong>Degree: </strong> %s%s</div>',
-                @$preset['label'],
-                !@$preset['field'] ? ' (' . @$field['label'] . ')' : ''
-            ));
-            if (($info['needs_robe'] || $info['needs_hood']) && $institution) $div->addChild(sprintf(
-                '<div><strong>Alma mater: </strong> %s</div>',
-                $institution['label']
-            ));
+            if (($info['needs_robe'] || $info['needs_hood']) && $preset)
+                $div->addChild(sprintf(
+                    '<div><strong>Degree: </strong> %s%s</div>',
+                    @$preset['label'],
+                    !@$preset['field'] ? ' (' . @$field['label'] . ')' : ''
+                ));
+            if (($info['needs_robe'] || $info['needs_hood']) && $institution)
+                $div->addChild(sprintf(
+                    '<div><strong>Alma mater: </strong> %s</div>',
+                    $institution['label'],
+                ));
             else if ($info['institution_notfound']) {
                 $div->addChild('<div><strong>Alma mater: </strong> Marked as "not found." Someone may contact you for more information.</div>');
             }
-            if ($info['needs_robe'] && $info['size_height']) $div->addChild(sprintf(
-                '<div><strong>Robe size: </strong> %s\' %s", %slbs</div>',
-                floor($info['size_height'] / 12),
-                $info['size_height'] % 12,
-                abs(intval($info['size_weight'])),
-            ));
-            if ($info['needs_hat'] && $info['size_hat']) $div->addChild(sprintf(
-                '<div><strong>Hat size: </strong> %s</div>',
-                $info['size_hat']
-            ));
+            if ($info['needs_robe'] && $info['size_height'])
+                $div->addChild(sprintf(
+                    '<div><strong>Robe size: </strong> %s\' %s", %slbs</div>',
+                    floor($info['size_height'] / 12),
+                    $info['size_height'] % 12,
+                    abs(intval($info['size_weight'])),
+                ));
+            if ($info['needs_hat'] && $info['size_hat'])
+                $div->addChild(sprintf(
+                    '<div><strong>Hat size: </strong> %s</div>',
+                    $info['size_hat'],
+                ));
             if (!Regalia::validatePersonInfo($this->for, true)) {
                 $div->addChild('<div class="notification notification--warning">Regalia information for <kbd>' . $this->for . '</kbd> needs to be updated due to changes to the form or available options</div>');
                 $div->addChild(sprintf('<a href="%s" class="button">Update regalia information</a>', $editURL));
-            } else {
+            }
+            else {
                 $div->addChild(sprintf('<p><small><a href="%s">Edit regalia information</a></small></p>', $editURL));
             }
             return $div;
-        } else {
+        }
+        else {
             $div->addChild('<p>No regalia information on file. Please complete this section to enter your regalia sizing and degree information. Your information will be automatically saved for next time you need to rent regalia.</p>');
             $div->addChild(sprintf('<a href="%s" class="button">Enter regalia information</a>', $editURL));
             return $div;
@@ -125,9 +140,9 @@ class RegaliaInformationForm extends DIV
         $form->addClass('regalia-form');
 
         $parts = new CheckboxListField('Which pieces of regalia do you need to rent?', [
-            'hat' => 'Hat',
+            'hat'  => 'Hat',
             'robe' => 'Robe',
-            'hood' => 'Hood'
+            'hood' => 'Hood',
         ]);
         $parts->addClass('regalia-form__parts');
         $parts->setRequired(true);
@@ -150,21 +165,30 @@ class RegaliaInformationForm extends DIV
         // Set up validators to ensure required info is there, based on selected parts
 
         $hatValidator = function (InputInterface $input) use ($parts) {
-            if (!in_array('hat', $parts->value() ?? [])) return null;
-            elseif (!$input->value()) return "This field is required if you are ordering a hat";
-            else return null;
+            if (!in_array('hat', $parts->value() ?? []))
+                return null;
+            elseif (!$input->value())
+                return "This field is required if you are ordering a hat";
+            else
+                return null;
         };
 
         $robeValidator = function (InputInterface $input) use ($parts) {
-            if (!in_array('robe', $parts->value() ?? [])) return null;
-            elseif (!$input->value()) return "This field is required if you are ordering a robe";
-            else return null;
+            if (!in_array('robe', $parts->value() ?? []))
+                return null;
+            elseif (!$input->value())
+                return "This field is required if you are ordering a robe";
+            else
+                return null;
         };
 
         $hoodValidator = function (InputInterface $input) use ($parts) {
-            if (!in_array('hood', $parts->value() ?? [])) return null;
-            elseif (!$input->value()) return "This field is required if you are ordering a hood";
-            else return null;
+            if (!in_array('hood', $parts->value() ?? []))
+                return null;
+            elseif (!$input->value())
+                return "This field is required if you are ordering a hood";
+            else
+                return null;
         };
 
         $size->hat()->addValidator($hatValidator);
@@ -178,20 +202,28 @@ class RegaliaInformationForm extends DIV
         // alma mater has two inputs, so it needs a special validator
 
         $almaMater->institution()->addValidator(function () use ($parts, $almaMater) {
-            if (!in_array('hood', $parts->value() ?? [])) return null;
+            if (!in_array('hood', $parts->value() ?? []))
+                return null;
             if (!$almaMater->institution()->value() && !$almaMater->notFound()->value()) {
                 return 'This field is required if you are ordering a hood or robe';
-            } else return null;
+            }
+            else
+                return null;
         });
 
         // extra validator for degree type/level fields
 
         $degree->field()->addValidator(function () use ($parts, $degree) {
-            if (!in_array('hood', $parts->value() ?? []) && !in_array('robe', $parts->value() ?? [])) return null;
-            elseif (!$degree->type()->value()) return null;
+            if (!in_array('hood', $parts->value() ?? []) && !in_array('robe', $parts->value() ?? []))
+                return null;
+            elseif (!$degree->type()->value())
+                return null;
             elseif (substr($degree->type()->value(), 0, 8) != '[preset]') {
-                if (!$degree->field()->value()) return 'This field is required for this degree type/level';
-            } else return null;
+                if (!$degree->field()->value())
+                    return 'This field is required for this degree type/level';
+            }
+            else
+                return null;
         });
 
         // Set defaults from logged person info
@@ -204,14 +236,14 @@ class RegaliaInformationForm extends DIV
             ]));
             $degree->setDefault([
                 'preset_id' => $person['preset_id'],
-                'field_id' => $person['field_id']
+                'field_id'  => $person['field_id'],
             ]);
             $almaMater->setDefault($person['institution_id']);
             $almaMater->notFound()->setDefault($person['institution_notfound']);
             $size->setDefault([
                 'height' => $person['size_height'],
                 'weight' => $person['size_weight'],
-                'hat' => $person['size_hat']
+                'hat'    => $person['size_hat'],
             ]);
         }
 
@@ -223,30 +255,31 @@ class RegaliaInformationForm extends DIV
 
         $form->addCallback(function () use ($parts, $degree, $almaMater, $size) {
             $value = [
-                'identifier' => $this->for,
-                'preset_id' => $degree->value()['preset_id'],
-                'field_id' => $degree->value()['field_id'],
-                'institution_id' => $almaMater->value() ? $almaMater->value() : null,
+                'identifier'           => $this->for,
+                'preset_id'            => $degree->value()['preset_id'],
+                'field_id'             => $degree->value()['field_id'],
+                'institution_id'       => $almaMater->value() ? $almaMater->value() : null,
                 'institution_notfound' => $almaMater->notFound()->value() ? 1 : 0,
-                'needs_hat' => in_array('hat', $parts->value()) ? 1 : 0,
-                'needs_robe' => in_array('robe', $parts->value()) ? 1 : 0,
-                'needs_hood' => in_array('hood', $parts->value()) ? 1 : 0,
-                'size_height' => $size->value()['height'],
-                'size_weight' => $size->value()['weight'],
-                'size_hat' => $size->value()['hat']
+                'needs_hat'            => in_array('hat', $parts->value()) ? 1 : 0,
+                'needs_robe'           => in_array('robe', $parts->value()) ? 1 : 0,
+                'needs_hood'           => in_array('hood', $parts->value()) ? 1 : 0,
+                'size_height'          => $size->value()['height'],
+                'size_weight'          => $size->value()['weight'],
+                'size_hat'             => $size->value()['hat'],
             ];
             PersonInfo::setFor(
                 $this->for,
                 [
-                    'institution_notfound' => $almaMater->notFoundValue()
-                ]
+                    'institution_notfound' => $almaMater->notFoundValue(),
+                ],
             );
             if (Regalia::getPersonInfo($this->for)) {
                 Regalia::query()
                     ->update('regalia_person', $value)
                     ->where('identifier = ?', [$this->for])
                     ->execute();
-            } else {
+            }
+            else {
                 Regalia::query()
                     ->insertInto('regalia_person', $value)
                     ->execute();
@@ -262,9 +295,10 @@ class RegaliaInformationForm extends DIV
         return array_merge(
             [
                 $this->notifications(),
-                $this->currentChildObject()
+                $this->currentChildObject(),
             ],
-            parent::children()
+            parent::children(),
         );
     }
+
 }

@@ -8,7 +8,8 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class InstitutionInput extends AutocompleteInput
 {
-    public function __construct(string $id = null)
+
+    public function __construct(string|null $id = null)
     {
         parent::__construct(
             $id,
@@ -17,12 +18,15 @@ class InstitutionInput extends AutocompleteInput
                 $institution = Regalia::institutions()
                     ->where('regalia_institution.id = ?', [$value])
                     ->fetch();
-                if (!$institution) return null;
-                else return [
-                    'html' => sprintf('<div class="label">%s</div>', $institution['label']),
-                    'value' => $institution['id']
-                ];
+                if (!$institution)
+                    return null;
+                else
+                    return [
+                        'html'  => sprintf('<div class="label">%s</div>', $institution['label']),
+                        'value' => $institution['id'],
+                    ];
             }
         );
     }
+
 }

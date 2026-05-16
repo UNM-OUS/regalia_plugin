@@ -22,21 +22,23 @@ class RegaliaGroups
      * @param Semester|null $semester
      * @return RegaliaGroup[]
      */
-    public static function getBySemester(Semester $semester = null): array
+    public static function getBySemester(Semester|null $semester = null): array
     {
         $semester = $semester ?? Semesters::current();
         static $cache = [];
         return $cache[$semester->intVal()]
             ?? $cache[$semester->intVal()] = static::select()
-            ->where('semester', strval($semester->intVal()))
-            ->fetchAll();
+                ->where('semester', strval($semester->intVal()))
+                ->fetchAll();
     }
 
     public static function get(?int $id): ?RegaliaGroup
     {
         static $cache = [];
-        if ($id === null) return null;
+        if ($id === null)
+            return null;
         return $cache[$id]
             ?? $cache[$id] = static::select()->where('id', $id)->fetch();
     }
+
 }

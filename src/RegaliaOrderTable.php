@@ -9,6 +9,7 @@ use DigraphCMS\UI\Pagination\PaginatedTable;
 
 class RegaliaOrderTable extends PaginatedTable
 {
+
     const JOSTENS_PARTS = [
         'HOOD',
         'PACKAGE T/G',
@@ -18,7 +19,7 @@ class RegaliaOrderTable extends PaginatedTable
         'GOWN',
     ];
 
-    public function __construct(RegaliaOrderSelect $select, string $download = null)
+    public function __construct(RegaliaOrderSelect $select, string|null $download = null)
     {
         parent::__construct($select, [$this, 'regaliaCallback'], $this->regaliaHeaders());
         if ($download) {
@@ -60,7 +61,7 @@ class RegaliaOrderTable extends PaginatedTable
             $order->robe() ? 'Robe' : '',
             implode(', ', array_filter([
                 $order->heightHR(),
-                $order->weight()
+                $order->weight(),
             ])),
             $order->degreeLevel(),
         ];
@@ -114,4 +115,5 @@ class RegaliaOrderTable extends PaginatedTable
         }
         return $row;
     }
+
 }

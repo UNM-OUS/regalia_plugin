@@ -11,10 +11,12 @@ use Flatrr\FlatArray;
 
 class RegaliaRequest
 {
-    protected $id, $semester, $identifier, $preferred_group, $cancelled, $parent, $assigned_order;
+
+    protected                                                                     $id,                                                                $semester,                                                     $identifier,                                        $preferred_group,                      $cancelled,          $parent, $assigned_order;
 
     /** @var string|FlatArray */
     protected $data;
+
     protected $parent_value = false;
 
     public static function create(
@@ -22,21 +24,22 @@ class RegaliaRequest
         string $identifier,
         RegaliaRequestingParent $parent,
         array $data = [],
-        RegaliaOrder $order = null
-    ): RegaliaRequest {
+        RegaliaOrder|null $order = null,
+    ): RegaliaRequest
+    {
         return RegaliaRequests::get(
             DB::query()->insertInto(
                 'regalia_request',
                 [
-                    'semester' => $semester->intVal(),
-                    'identifier' => $identifier,
-                    'cancelled' => false,
-                    'parent' => $parent->uuid(),
-                    'assigned_order' => $order ? $order->id() : null,
+                    'semester'        => $semester->intVal(),
+                    'identifier'      => $identifier,
+                    'cancelled'       => false,
+                    'parent'          => $parent->uuid(),
+                    'assigned_order'  => $order ? $order->id() : null,
                     'preferred_group' => $parent->regaliaPreferredGroup(),
-                    'data' => json_encode($data)
-                ]
-            )->execute()
+                    'data'            => json_encode($data),
+                ],
+            )->execute(),
         );
     }
 
@@ -52,7 +55,8 @@ class RegaliaRequest
         DB::beginTransaction();
         if ($order = $this->order()) {
             $requests = RegaliaRequests::select()->where('assigned_order', $order->id())->count();
-            if ($requests <= 1) $order->cancel();
+            if ($requests <= 1)
+                $order->cancel();
         }
         DB::query()->delete('regalia_request', $this->id())->execute();
         DB::commit();
@@ -62,16 +66,16 @@ class RegaliaRequest
     {
         // update data and assigned order
         $update = [
-            'data' => json_encode($this->data()->get()),
-            'assigned_order' => $this->assigned_order,
+            'data'            => json_encode($this->data()->get()),
+            'assigned_order'  => $this->assigned_order,
             'preferred_group' => $this->parent()->regaliaPreferredGroup(),
-            'cancelled' => $this->cancelled()
+            'cancelled'       => $this->cancelled(),
         ];
         // execute query
         return !!DB::query()->update(
             'regalia_request',
             $update,
-            $this->id()
+            $this->id(),
         )->execute();
     }
 
@@ -139,7 +143,9 @@ class RegaliaRequest
 
     public function data(): FlatArray
     {
-        if (is_string($this->data)) $this->data = new FlatArray(json_decode($this->data, true, 512, JSON_THROW_ON_ERROR));
+        if (is_string($this->data))
+            $this->data = new FlatArray(json_decode($this->data, true, 512, JSON_THROW_ON_ERROR));
         return $this->data;
     }
+
 }

@@ -12,9 +12,10 @@ use DigraphCMS_Plugins\unmous\ous_digraph_module\Semesters;
  */
 class RegaliaOrderSelect extends AbstractMappedSelect
 {
+
     protected $returnObjectClass = RegaliaOrder::class;
 
-    public function semester(Semester $semester = null): static
+    public function semester(Semester|null $semester = null): static
     {
         $semester = $semester ?? Semesters::current();
         return $this->where('regalia_group.semester', $semester->intVal());
@@ -62,4 +63,5 @@ class RegaliaOrderSelect extends AbstractMappedSelect
         $this->where('regalia_order.cancelled = 0');
         return $this;
     }
+
 }

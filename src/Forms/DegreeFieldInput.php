@@ -8,7 +8,8 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class DegreeFieldInput extends AutocompleteInput
 {
-    public function __construct(string $id = null)
+
+    public function __construct(string|null $id = null)
     {
         parent::__construct(
             $id,
@@ -17,13 +18,16 @@ class DegreeFieldInput extends AutocompleteInput
                 $field = Regalia::fields()
                     ->where('regalia_field.id = ?', [$value])
                     ->fetch();
-                if (!$field) return null;
-                else return [
-                    'html' => sprintf('<div class="label">%s</div>', $field['label']),
-                    'value' => $field['id']
-                ];
+                if (!$field)
+                    return null;
+                else
+                    return [
+                        'html'  => sprintf('<div class="label">%s</div>', $field['label']),
+                        'value' => $field['id'],
+                    ];
             }
         );
         $this->addClass('autocomplete-input--autopopulate');
     }
+
 }

@@ -10,9 +10,10 @@ use DigraphCMS_Plugins\unmous\regalia\RegaliaOrder;
 
 class RegaliaRequester
 {
-    protected $semester, $identifier, $requests;
 
-    public function __construct(Semester $semester = null, string $identifier = null)
+    protected                         $semester,              $identifier, $requests;
+
+    public function __construct(Semester|null $semester = null, string|null $identifier = null)
     {
         $this->semester = $this->semester ?? $semester->intVal();
         $this->identifier = $this->identifier ?? $identifier;
@@ -32,7 +33,7 @@ class RegaliaRequester
             $group,
             $this->identifier(),
             'order',
-            $this->prefersTam()
+            $this->prefersTam(),
         ));
         DB::commit();
         return $this;
@@ -52,7 +53,7 @@ class RegaliaRequester
             $group,
             $this->identifier(),
             'order',
-            $this->prefersTam()
+            $this->prefersTam(),
         ));
         DB::commit();
         return $this;
@@ -66,7 +67,8 @@ class RegaliaRequester
      */
     public function assignExtra(RegaliaOrder $order)
     {
-        if ($order->type() != 'extra') return $this;
+        if ($order->type() != 'extra')
+            return $this;
         $person = PersonInfo::fetch($this->identifier());
         $email = $person['email'];
         if (!$email) {
@@ -115,7 +117,8 @@ class RegaliaRequester
     {
         $priority = 0;
         foreach ($this->requests() as $request) {
-            if ($request->cancelled()) continue;
+            if ($request->cancelled())
+                continue;
             $priority += $request->parent()->regaliaRequestPriority();
         }
         return $priority;
@@ -136,8 +139,10 @@ class RegaliaRequester
         $preferred = null;
         foreach ($this->requests as $request) {
             $pPreferred = $request->parent()->regaliaPrefersTam();
-            if ($pPreferred) return true;
-            elseif ($pPreferred === false) $preferred = false;
+            if ($pPreferred)
+                return true;
+            elseif ($pPreferred === false)
+                $preferred = false;
         }
         return $preferred;
     }
@@ -147,12 +152,19 @@ class RegaliaRequester
         $platform = false;
         $marshal = false;
         foreach ($this->requests() as $request) {
-            if (!$request->preferredGroup()) continue;
-            if (str_contains($request->preferredGroup(), 'platform')) $platform = true;
-            elseif (str_contains($request->preferredGroup(), 'marshal')) $marshal = true;
+            if (!$request->preferredGroup())
+                continue;
+            if (str_contains($request->preferredGroup(), 'platform'))
+                $platform = true;
+            elseif (str_contains($request->preferredGroup(), 'marshal'))
+                $marshal = true;
         }
-        if ($platform) return 'platform';
-        elseif ($marshal) return 'marshal';
-        else return 'normal';
+        if ($platform)
+            return 'platform';
+        elseif ($marshal)
+            return 'marshal';
+        else
+            return 'normal';
     }
+
 }

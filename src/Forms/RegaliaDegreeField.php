@@ -8,8 +8,10 @@ use DigraphCMS_Plugins\unmous\regalia\Regalia;
 
 class RegaliaDegreeField extends FIELDSET
 {
+
     /** @var Field */
     protected $type;
+
     /** @var Field */
     protected $field;
 
@@ -37,14 +39,15 @@ class RegaliaDegreeField extends FIELDSET
         return $this->field;
     }
 
-    public function setDefault(array $value = null)
+    public function setDefault(array|null $value = null)
     {
         if ($value) {
             $preset = Regalia::preset(@$value['preset_id']);
             if ($preset) {
                 if ($preset['field_id']) {
                     $this->type->setDefault('[preset]' . $preset['id']);
-                } else {
+                }
+                else {
                     $this->type->setDefault($preset['id']);
                     $this->field->setDefault($value['field_id']);
                 }
@@ -55,15 +58,19 @@ class RegaliaDegreeField extends FIELDSET
 
     public function value(bool $useDefault = false)
     {
-        if (!$this->type->value()) return null;
+        if (!$this->type->value())
+            return null;
         $presetID = preg_replace('/^\[preset\]/', '', $this->type->value($useDefault));
         $preset = Regalia::preset($presetID);
-        if (!$preset) return null;
+        if (!$preset)
+            return null;
         $fieldID = $preset['field_id'] ?? $this->field->value();
-        if (!$fieldID) return null;
+        if (!$fieldID)
+            return null;
         return [
             'preset_id' => $presetID ? $presetID : null,
-            'field_id' => $fieldID ? $fieldID : null //@phpstan-ignore-line
+            'field_id'  => $fieldID ? $fieldID : null //@phpstan-ignore-line
         ];
     }
+
 }

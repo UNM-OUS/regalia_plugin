@@ -30,6 +30,7 @@ class RegaliaRequestField extends FIELDSET
         // display notification if this form is not for the current user and
         // the person the form is for has previously opted out of regalia
         if (!str_contains($for, '@')) {
+            // @phpstan-ignore-next-line plugins have a weird autoload structure
             $netIds = OUS::userNetIDs();
             if (!in_array($for, $netIds)) {
                 if (PersonInfo::getFor($for, 'regalia') === false) {
