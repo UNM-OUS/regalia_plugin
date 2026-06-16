@@ -103,7 +103,7 @@ if ($form->ready()) {
                 '<div><strong>Hat size: </strong> %s</div>',
                 $info['size_hat'],
             );
-        Notifications::printConfirmation(implode('', array_filter($display)));
+        Notifications::printConfirmationHTML(implode('', array_filter($display)));
     }
     echo '<h3>Past orders</h3>';
     $orders = \DigraphCMS_Plugins\unmous\regalia\RegaliaOrders::select()
